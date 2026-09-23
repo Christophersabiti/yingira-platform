@@ -46,7 +46,7 @@ Final local result: **10 unit tests, 19 database integration checks and 6 browse
 - Account-wide Auth-session-bound shifts, atomic acquisition, 20-second heartbeat and 90-second expiry, explicit end and scoped Admin release. Every admission rechecks the shift. Different staff can operate the same event concurrently. Database audit preserves Admin support role and real actor.
 - Supervisor guest search, exception overrides, invitation designer and bulk import are still pending.
 
-Verification: 15 staff-access integration checks, 19 admission integration checks, 10 unit tests and 8 browser scenarios passed (the final invitation scenario passed after its accessible-label correction). Lint, typecheck, format check, production build and local security advisor passed. Production migration/deployment requires the requested explicit approval.
+Verification: 15 staff-access integration checks, 19 admission integration checks, 10 unit tests and 8 browser scenarios passed (the final invitation scenario passed after its accessible-label correction). Lint, typecheck, format check, production build and local security advisor passed. Production rollout approved on 23 September 2026. The hosted staff migration is applied and Admin onboarding is enabled; the application deploys from main.
 
 ## Next delivery: M2
 

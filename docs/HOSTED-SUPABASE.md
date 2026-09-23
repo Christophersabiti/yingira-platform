@@ -4,6 +4,10 @@ Project: [yingira](https://supabase.com/dashboard/project/vewpmovgfftsppsaiput),
 
 On 23 September 2026 the two repository migrations were applied to this project. Select the **yingira** schema in the Table Editor to see its 13 application tables. All tables enforce RLS. No local demo guests or accounts were uploaded.
 
+## Connection verified
+
+On 23 September 2026, the local app was switched to this hosted project. The server-only invitation RPC was verified with a random nonexistent token, the login page loaded, and a guest lookup completed without a service error. Auth Site URL is `http://localhost:3000` with the exact `/auth/callback` redirect allowed. Credentials and the separate hosted encryption key are saved only in ignored local files. No synthetic hosted accounts or guests were created. This verifies connectivity, not a full hosted event rehearsal.
+
 ## Connect the application
 
 The project URL and publishable key are public configuration in `scripts/setup-hosted.ts`. The server key must remain private. Save the project's existing secret API key as a single line in `.local/hosted-secret.txt`, then run:

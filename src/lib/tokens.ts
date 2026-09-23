@@ -50,3 +50,26 @@ export function issueToken(secret: string) {
     tokenCiphertext: sealToken(token, secret),
   };
 }
+
+// Historical invitations can outlive the key used to create their envelope.
+// Never let an unreadable envelope prevent access to the rest of an event.
+export function invitationLinks(
+  guests: { id: string; token_ciphertext: string | null }[],
+  origin: string,
+  secrets: string[],
+) {
+  const links: Record<string, string> = {};
+  for (const guest of guests) {
+    if (!guest.token_ciphertext) continue;
+    for (const secret of secrets) {
+      try {
+        const token = openToken(guest.token_ciphertext, secret);
+        links[guest.id] = `${origin}/i/${token}`;
+        break;
+      } catch {
+        // Try the retained previous key, then leave recovery to the Admin.
+      }
+    }
+  }
+  return links;
+}

@@ -48,3 +48,19 @@ node --env-file=.env.local --import tsx scripts/provision-admin.ts admin@example
 This permits that verified email to create its own organization. It does not create an Auth account, send email, or grant access to an existing organization. The service credential is required; authenticated browser users cannot invoke this command. Admin registers, confirms email, creates a workspace and event, then uses Event team to invite or update supervisors and ushers. Share the registration link manually. Staff must use the exact assigned email.
 
 Operational staff enter through `/work/[eventId]` and start a shift. One account can hold one active event/session; other staff accounts work concurrently. Admin support buttons preserve the real account identity. Release stuck shifts through Event team or wait 90 seconds after the old session stops sending heartbeats.
+
+### Retaining invitation links across encryption-key changes
+
+Keep `INVITATION_ENCRYPTION_KEY` stable in every environment writing to the same
+hosted database. Existing invitation envelopes cannot be read with a different
+key. If a previous key is needed, configure the server-only production secret
+`INVITATION_PREVIOUS_ENCRYPTION_KEY`; the event page tries the current key first,
+then the previous key. New invitations always use the current key. Retain the
+previous key until no active envelopes require it.
+
+On 23 September 2026, a hosted invitation created with the earlier key caused
+an authenticated event page to fail during rendering. Recovery was verified
+against that saved envelope without changing its QR token. Unreadable envelopes
+now leave the Admin page available and expose an explicit Reissue action, which
+invalidates the old QR. Regression coverage is in
+`tests/unit/invitation-links.test.ts`.

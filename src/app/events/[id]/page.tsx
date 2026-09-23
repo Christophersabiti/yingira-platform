@@ -2,7 +2,7 @@ import { Shell } from '@/components/shell';
 import { EventView } from '@/components/event-detail';
 import { authenticated, query } from '@/server/data';
 import { appOrigin, encryptionKey } from '@/server/config';
-import { openToken } from '@/lib/tokens';
+import { invitationLinks } from '@/lib/tokens';
 import type { EventDetail } from '@/lib/contracts';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -16,11 +16,12 @@ export default async function EventPage({
   const { user } = await authenticated();
   const event = await query<EventDetail>('event', { eventId: id });
   if (!event.isAdmin) redirect(`/work/${id}`);
-  const links: Record<string, string> = {};
-  for (const guest of event.guests)
-    if (guest.token_ciphertext)
-      links[guest.id] =
-        `${appOrigin()}/i/${openToken(guest.token_ciphertext, encryptionKey())}`;
+  const links = invitationLinks(event.guests, appOrigin(), [
+    encryptionKey(),
+    ...(process.env.INVITATION_PREVIOUS_ENCRYPTION_KEY
+      ? [process.env.INVITATION_PREVIOUS_ENCRYPTION_KEY]
+      : []),
+  ]);
   return (
     <Shell email={user.email ?? ''}>
       <EventView

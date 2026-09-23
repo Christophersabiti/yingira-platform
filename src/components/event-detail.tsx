@@ -270,7 +270,7 @@ export function EventView({
                                   </button>
                                 </>
                               )}
-                              {g.revoked ? (
+                              {g.revoked || !links[g.id] ? (
                                 <CommandForm
                                   action="reissue"
                                   values={{
@@ -292,6 +292,12 @@ export function EventView({
                             </div>
                             {g.revoked && (
                               <small className="danger">Revoked</small>
+                            )}
+                            {!g.revoked && !links[g.id] && (
+                              <small className="danger">
+                                Saved link unavailable. Reissue creates a new QR
+                                and invalidates the previous one.
+                              </small>
                             )}
                           </td>
                         </tr>

@@ -1,3 +1,4 @@
+import pg from 'pg';
 import { createClient } from '@supabase/supabase-js';
 import { randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -56,6 +57,13 @@ async function call(action: string, data: Record<string, unknown> = {}) {
   if (!r.ok) throw new Error(r.message);
   return r.data;
 }
+const db = new pg.Client({ connectionString: process.env.DATABASE_URL });
+await db.connect();
+await db.query(
+  'insert into yingira.admin_onboarding(email) values($1) on conflict do nothing',
+  [organizer],
+);
+await db.end();
 const org = await call('create_organization', { name: 'Sabtech Events Demo' });
 const event = await call('create_event', {
   organizationId: org.id,

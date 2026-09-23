@@ -50,9 +50,17 @@ export function EventView({
             · {event.venue}
           </p>
         </div>
-        <Link className="button" href={`/scan/${event.id}`}>
-          <ScanLine size={18} /> Open scanner
-        </Link>
+        <div className="support-actions">
+          <Link className="button" href={`/work/${event.id}?role=supervisor`}>
+            Work as supervisor
+          </Link>
+          <Link
+            className="button secondary"
+            href={`/work/${event.id}?role=usher`}
+          >
+            <ScanLine size={18} /> Work as usher
+          </Link>
+        </div>
       </div>
       <div className="event-status-row">
         <span className={`badge ${event.status === 'active' ? 'green' : ''}`}>
@@ -298,30 +306,31 @@ export function EventView({
             <section className="panel">
               <h2>The people at the entrance.</h2>
               <p className="muted">
-                Ask staff to register and confirm their email, then assign them
-                here. Both roles can scan; supervisor exceptions arrive in a
-                later milestone.
+                Invite a person by email and choose their role and gate. They
+                register and confirm that same email to receive access. Share
+                the registration link below; invitation emails are not sent
+                automatically.
               </p>
               <CommandForm
                 action="assign_staff"
                 values={{ eventId: event.id }}
-                label="Assign team member"
+                label="Invite or update team member"
               >
                 <div className="form-grid">
                   <label>
-                    Confirmed email
+                    Staff email
                     <input type="email" name="email" required />
                   </label>
                   <label>
                     Role
-                    <select name="role">
+                    <select name="role" aria-label="Role">
                       <option value="usher">Entrance usher</option>
                       <option value="supervisor">Supervisor</option>
                     </select>
                   </label>
                   <label>
                     Gate
-                    <select name="gateId">
+                    <select name="gateId" aria-label="Gate">
                       {event.gates.map((g) => (
                         <option key={g.id} value={g.id}>
                           {g.name}
@@ -331,7 +340,41 @@ export function EventView({
                   </label>
                 </div>
               </CommandForm>
+              <p>
+                <button
+                  className="text-button"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(
+                        `${window.location.origin}/register`,
+                      );
+                      setCopied('staff-invite');
+                    } catch {
+                      setCopied('');
+                    }
+                  }}
+                >
+                  {copied === 'staff-invite'
+                    ? 'Registration link copied'
+                    : 'Copy staff registration link'}
+                </button>
+              </p>
               <div className="team-list">
+                {event.pendingStaff.map((s) => (
+                  <div key={s.id}>
+                    <div>
+                      <strong>{s.email}</strong>
+                      <small>
+                        {s.role} · Waiting for verified registration
+                      </small>
+                    </div>
+                    <CommandForm
+                      action="cancel_staff_invitation"
+                      values={{ eventId: event.id, invitationId: s.id }}
+                      label="Cancel invitation"
+                    />
+                  </div>
+                ))}
                 {event.staff.map((s) => (
                   <div key={s.user_id}>
                     <div>
@@ -341,6 +384,13 @@ export function EventView({
                         {s.active ? 'Active' : 'Disabled'}
                       </small>
                     </div>
+                    {s.on_shift && (
+                      <CommandForm
+                        action="release_staff_shift"
+                        values={{ eventId: event.id, userId: s.user_id }}
+                        label="End staff shift"
+                      />
+                    )}
                     {s.active && (
                       <CommandForm
                         action="disable_staff"

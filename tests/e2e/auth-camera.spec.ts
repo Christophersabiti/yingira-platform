@@ -47,7 +47,7 @@ test('registration requires and accepts local email confirmation', async ({
   await page.goto(match![1].replaceAll('&amp;', '&'));
   await expect(page).toHaveURL('/dashboard');
   await expect(
-    page.getByRole('heading', { name: 'Give your workspace a name.' }),
+    page.getByRole('heading', { name: 'Your event assignments' }),
   ).toBeVisible();
 });
 test('camera pipeline decodes a QR frame without admitting automatically', async ({
@@ -85,8 +85,10 @@ test('camera pipeline decodes a QR frame without admitting automatically', async
   await page.getByLabel('Email address').fill(fixture.staffEmail);
   await page.getByLabel('Password', { exact: true }).fill(fixture.password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page).toHaveURL('/dashboard');
-  await page.goto(`/scan/${fixture.eventId}`);
+  await expect(page).toHaveURL(`/work/${fixture.eventId}`);
+  await page
+    .getByRole('button', { name: 'Start usher shift', exact: true })
+    .click();
   await page.getByRole('button', { name: 'Open camera', exact: true }).click();
   await expect(page.getByText('VALID INVITATION', { exact: true })).toBeVisible(
     { timeout: 15000 },
@@ -97,4 +99,5 @@ test('camera pipeline decodes a QR frame without admitting automatically', async
   await expect(
     page.getByText('ADMITTED SUCCESSFULLY', { exact: true }),
   ).toHaveCount(0);
+  await page.getByRole('button', { name: 'End shift', exact: true }).click();
 });

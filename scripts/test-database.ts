@@ -48,11 +48,26 @@ async function account(name: string) {
   assert.ifError(signed.error);
   return { client, email, id: created.data.user!.id };
 }
+const testLeases = new Map<SupabaseClient, string>();
 async function rpc<T>(
   client: SupabaseClient,
   action: string,
   data: Record<string, unknown> = {},
 ) {
+  if (action === 'validate' || action === 'admit') {
+    let leaseId = testLeases.get(client);
+    if (!leaseId) {
+      leaseId = randomUUID();
+      testLeases.set(client, leaseId);
+    }
+    const started = await client.rpc('yingira_command', {
+      p_action: 'start_shift',
+      p_data: { eventId: data.eventId, leaseId, role: 'usher' },
+    });
+    assert.ifError(started.error);
+    assert.equal(started.data.ok, true);
+    data = { ...data, leaseId };
+  }
   const response = await client.rpc('yingira_command', {
     p_action: action,
     p_data: data,
@@ -74,6 +89,10 @@ try {
     staff = await account('usher'),
     second = await account('usher-two'),
     outsider = await account('outsider');
+  await db.query(
+    'insert into yingira.admin_onboarding(email) values($1),($2) on conflict do nothing',
+    [owner.email, outsider.email],
+  );
   const org = await mutate(owner.client, 'create_organization', {
     name: 'Sabtech Events Demo',
   });
@@ -190,7 +209,12 @@ try {
   assert(!invalid.ok && invalid.code === 'INVALID');
   const wrongGate = await staff.client.rpc('yingira_command', {
     p_action: 'validate',
-    p_data: { ...base, gateId: randomUUID(), token: one.token },
+    p_data: {
+      ...base,
+      leaseId: testLeases.get(staff.client),
+      gateId: randomUUID(),
+      token: one.token,
+    },
   });
   assert.equal(wrongGate.error?.code, '42501');
   const otherDetail = await rpc<EventDetail>(outsider.client, 'event', {
@@ -434,6 +458,10 @@ try {
       invitationId: browserGuest.id,
     }),
     { mode: 0o600 },
+  );
+  await db.query(
+    'delete from yingira.staff_shifts where user_id=any($1::uuid[])',
+    [[owner.id, staff.id, second.id]],
   );
   console.log(
     `${checks} database integration checks passed. Browser fixture saved to ignored .local/fixture.json.`,

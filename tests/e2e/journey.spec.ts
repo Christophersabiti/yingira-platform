@@ -13,7 +13,9 @@ async function login(page: Page, email: string) {
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(fixture.password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page).toHaveURL('/dashboard');
+  await expect(page).toHaveURL(
+    email === fixture.staffEmail ? `/work/${fixture.eventId}` : '/dashboard',
+  );
 }
 test('public welcome and protected workspace', async ({ page }) => {
   await page.goto('/');
@@ -80,10 +82,10 @@ test('usher recovers a lost admission response without admitting twice', async (
 }) => {
   await login(page, fixture.staffEmail);
   await page.goto(`/events/${fixture.eventId}`);
-  await expect(page.getByText('Ready to welcome your guests?')).toBeVisible();
+  await expect(page.getByText('Ready to welcome guests?')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add guest' })).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('link', { name: 'Open scanner' }).click();
+  await page.getByRole('button', { name: 'Start usher shift' }).click();
   await expect(page.getByRole('button', { name: 'Open camera' })).toBeVisible();
   await page.screenshot({ path: '.local/scanner-mobile.png', fullPage: true });
   await page.getByText('Use an invitation link instead').click();
@@ -114,6 +116,7 @@ test('usher recovers a lost admission response without admitting twice', async (
     page.getByRole('button', { name: 'Recover admission result' }),
   ).toBeVisible();
   await page.reload();
+  await page.getByRole('button', { name: 'Start usher shift' }).click();
   await expect(
     page.getByRole('button', { name: 'Recover admission result' }),
   ).toBeVisible();
@@ -126,6 +129,7 @@ test('usher recovers a lost admission response without admitting twice', async (
     path: '.local/admission-mobile.png',
     fullPage: true,
   });
+  await page.getByRole('button', { name: 'End shift', exact: true }).click();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -151,4 +155,54 @@ test('organizer sees the usher timestamp and API denies cross-origin mutation', 
     data: { action: 'create_organization', name: 'Unauthorized' },
   });
   expect(response.status()).toBe(403);
+});
+
+test('Admin can support in either staff role and return to administration', async ({
+  page,
+}) => {
+  await login(page, fixture.ownerEmail);
+  await page.goto(`/events/${fixture.eventId}`);
+  await page
+    .getByRole('link', { name: 'Work as supervisor', exact: true })
+    .click();
+  await page
+    .getByRole('button', { name: 'Start supervisor shift', exact: true })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Event overview' }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Admin supporting · Supervisor', { exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'End shift', exact: true }).click();
+  await expect(page).toHaveURL(`/events/${fixture.eventId}`);
+  await page.getByRole('link', { name: 'Work as usher', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Start usher shift', exact: true })
+    .click();
+  await expect(
+    page.getByRole('button', { name: 'Open camera', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Event overview' }),
+  ).toHaveCount(0);
+  await page.getByRole('button', { name: 'End shift', exact: true }).click();
+});
+test('Admin can invite an unregistered supervisor and cancel the pending invitation', async ({
+  page,
+}) => {
+  await login(page, fixture.ownerEmail);
+  await page.goto(`/events/${fixture.eventId}`);
+  await page.getByRole('button', { name: 'Event team' }).click();
+  const email = `pending-${Date.now()}@yingira.test`;
+  await page.getByLabel('Staff email').fill(email);
+  await page.getByLabel('Role', { exact: true }).selectOption('supervisor');
+  await page
+    .getByRole('button', { name: 'Invite or update team member' })
+    .click();
+  await expect(page.getByText(email, { exact: true })).toBeVisible();
+  await page
+    .getByRole('button', { name: 'Cancel invitation', exact: true })
+    .click();
+  await expect(page.getByText(email, { exact: true })).toHaveCount(0);
 });

@@ -43,6 +43,7 @@ npm run lint
 npm run typecheck
 npm run format:check
 npm run build
+npm run test:staff
 npm run test:db
 npx playwright install chromium
 npm run test:e2e

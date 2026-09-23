@@ -4,7 +4,7 @@ import { authenticated, query } from '@/server/data';
 import { appOrigin, encryptionKey } from '@/server/config';
 import { openToken } from '@/lib/tokens';
 import type { EventDetail } from '@/lib/contracts';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 export default async function EventPage({
   params,
@@ -15,6 +15,7 @@ export default async function EventPage({
   if (!z.string().uuid().safeParse(id).success) notFound();
   const { user } = await authenticated();
   const event = await query<EventDetail>('event', { eventId: id });
+  if (!event.isAdmin) redirect(`/work/${id}`);
   const links: Record<string, string> = {};
   for (const guest of event.guests)
     if (guest.token_ciphertext)

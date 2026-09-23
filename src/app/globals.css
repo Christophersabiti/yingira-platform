@@ -1619,3 +1619,45 @@ td small,
 .scan-counts span {
   color: #617253;
 }
+
+.support-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.staff-workspace {
+  max-width: 1120px;
+  margin: auto;
+  padding: 24px;
+}
+.staff-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.staff-heading {
+  margin-bottom: 24px;
+}
+.staff-workspace .scanner-page {
+  min-height: 0;
+}
+.staff-workspace .scanner-page > header {
+  display: none;
+}
+.staff-workspace > .notice {
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) {
+  .staff-workspace {
+    padding: 16px;
+  }
+  .support-actions {
+    flex-direction: column;
+  }
+  .staff-heading h1 {
+    font-size: 2rem;
+  }
+}

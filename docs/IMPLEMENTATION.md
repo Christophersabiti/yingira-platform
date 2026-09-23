@@ -38,6 +38,16 @@ UI uses scoped semantic CSS and Lucide icons without a component-library depende
 
 Final local result: **10 unit tests, 19 database integration checks and 6 browser tests passed**. Lint, strict typecheck, formatting, production build and dependency audit also passed (no reported production dependency vulnerabilities). Registration/email confirmation and the QR decoder were exercised; camera input used a simulated video stream. No CI run on GitHub or physical camera/device test is implied by these local checks.
 
+## M2 team access increment
+
+- Operator-authorized Admin onboarding; verified ordinary users cannot create an organization to self-promote. Existing organization administrators retain access.
+- Pending staff invitations by email, automatic verified-email acceptance, cancellation, role/gate reassignment and immediate disable. Admin shares the registration link manually; no invitation email is sent automatically.
+- Role-directed staff workspace, usher scanner and supervisor live arrival overview. Admin has explicit Work as supervisor / Work as usher buttons without impersonation.
+- Account-wide Auth-session-bound shifts, atomic acquisition, 20-second heartbeat and 90-second expiry, explicit end and scoped Admin release. Every admission rechecks the shift. Different staff can operate the same event concurrently. Database audit preserves Admin support role and real actor.
+- Supervisor guest search, exception overrides, invitation designer and bulk import are still pending.
+
+Verification: 15 staff-access integration checks, 19 admission integration checks, 10 unit tests and 8 browser scenarios passed (the final invitation scenario passed after its accessible-label correction). Lint, typecheck, format check, production build and local security advisor passed. Production migration/deployment requires the requested explicit approval.
+
 ## Next delivery: M2
 
 CSV/XLSX import and duplicate review; normalized tables/categories/custom fields; richer invitation templates and RSVP; extra gates and invitation-based team onboarding; exit/re-entry; supervisor search/manual entry/overrides/corrections. Then M3 adds controlled offline reconciliation, reporting and platform account administration.

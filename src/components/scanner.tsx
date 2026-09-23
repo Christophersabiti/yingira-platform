@@ -22,8 +22,10 @@ export function Scanner({
   event,
   origin,
   userId,
+  leaseId,
 }: {
   userId: string;
+  leaseId: string;
   event: { id: string; title: string; gates: { id: string; name: string }[] };
   origin: string;
 }) {
@@ -96,6 +98,7 @@ export function Scanner({
     try {
       const result = await command<Scan>({
         action: 'validate',
+        leaseId,
         eventId: event.id,
         gateId: gate,
         token: parsed,
@@ -185,6 +188,7 @@ export function Scanner({
           JSON.stringify(intent),
         );
       }
+      intent = { ...intent, leaseId };
       const result = await command<Receipt>(intent);
       if (result.ok) {
         setReceipt(result.data);

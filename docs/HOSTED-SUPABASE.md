@@ -36,3 +36,15 @@ The hosted migration versions match the repository filenames. For future CLI wor
 ## Reviewed security advisory
 
 The hosted advisor flags `public.yingira_command(text,jsonb)` as an authenticated executable SECURITY DEFINER function ([advisory and remediation](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable)). This is the intentional command boundary: its owner is a non-login, non-BYPASSRLS role, browser roles cannot read private tables, and the function checks live identity/session and tenant/event/gate permissions. Local integration tests exercise these boundaries. Do not change it to SECURITY INVOKER or grant browser table access just to suppress the warning. Production review and remaining hardening are tracked in IMPLEMENTATION.md.
+
+## Admin onboarding and staff access
+
+Use the operator-only onboarding script with the intended project's ignored environment file:
+
+```sh
+node --env-file=.env.local --import tsx scripts/provision-admin.ts admin@example.com
+```
+
+This permits that verified email to create its own organization. It does not create an Auth account, send email, or grant access to an existing organization. The service credential is required; authenticated browser users cannot invoke this command. Admin registers, confirms email, creates a workspace and event, then uses Event team to invite or update supervisors and ushers. Share the registration link manually. Staff must use the exact assigned email.
+
+Operational staff enter through `/work/[eventId]` and start a shift. One account can hold one active event/session; other staff accounts work concurrently. Admin support buttons preserve the real account identity. Release stuck shifts through Event team or wait 90 seconds after the old session stops sending heartbeats.

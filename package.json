@@ -18,7 +18,8 @@
     "format:check": "prettier --check .",
     "setup:local": "node --import tsx scripts/setup-local.ts",
     "seed:demo": "node --env-file=.env.local --import tsx scripts/seed-demo.ts",
-    "setup:hosted": "node --import tsx scripts/setup-hosted.ts"
+    "setup:hosted": "node --import tsx scripts/setup-hosted.ts",
+    "test:staff": "node --env-file=.env.local --import tsx scripts/test-staff.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

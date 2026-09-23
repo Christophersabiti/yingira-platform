@@ -3,6 +3,27 @@ const uuid = z.string().uuid();
 const token = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
 const name = z.string().trim().min(2).max(160);
 export const commandSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('start_shift'),
+    eventId: uuid,
+    leaseId: uuid,
+    role: z.enum(['supervisor', 'usher']),
+  }),
+  z.object({
+    action: z.enum(['heartbeat_shift', 'end_shift', 'supervisor_overview']),
+    eventId: uuid,
+    leaseId: uuid,
+  }),
+  z.object({
+    action: z.literal('release_staff_shift'),
+    eventId: uuid,
+    userId: uuid,
+  }),
+  z.object({
+    action: z.literal('cancel_staff_invitation'),
+    eventId: uuid,
+    invitationId: uuid,
+  }),
   z.object({ action: z.literal('create_organization'), name }),
   z.object({
     action: z.literal('create_event'),
@@ -52,12 +73,14 @@ export const commandSchema = z.discriminatedUnion('action', [
   }),
   z.object({
     action: z.literal('validate'),
+    leaseId: uuid.optional(),
     eventId: uuid,
     gateId: uuid,
     token,
   }),
   z.object({
     action: z.literal('admit'),
+    leaseId: uuid.optional(),
     eventId: uuid,
     gateId: uuid,
     token,
@@ -92,6 +115,7 @@ export type Scan = {
 export type Result<T = unknown> =
   { ok: true; data: T } | { ok: false; code: string; message: string };
 export type Dashboard = {
+  canCreateOrganization: boolean;
   organizations: { id: string; name: string }[];
   events: {
     id: string;
@@ -101,6 +125,7 @@ export type Dashboard = {
     status: string;
     organization_id: string;
     is_admin: boolean;
+    role: StaffRole | null;
   }[];
 };
 export type EventDetail = {
@@ -111,6 +136,8 @@ export type EventDetail = {
   timezone: string;
   status: 'draft' | 'active' | 'closed';
   isAdmin: boolean;
+  role: StaffRole | null;
+  pendingStaff: { id: string; email: string; role: StaffRole }[];
   gates: { id: string; name: string }[];
   guests: {
     id: string;
@@ -124,6 +151,7 @@ export type EventDetail = {
   }[];
   staff: {
     user_id: string;
+    on_shift: boolean;
     email: string;
     role: string;
     active: boolean;
@@ -163,3 +191,6 @@ export function parseQr(value: string, origin: string): string | null {
     return null;
   }
 }
+
+export type StaffRole = 'supervisor' | 'usher';
+export type SupervisorOverview = Pick<EventDetail, 'metrics' | 'recent'>;

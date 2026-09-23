@@ -25,7 +25,7 @@ export function DashboardView({ data }: { data: Dashboard }) {
           </button>
         )}
       </div>
-      {data.organizations.length === 0 && (
+      {data.canCreateOrganization && data.organizations.length === 0 && (
         <section className="panel welcome-panel">
           <div>
             <span className="eyebrow">YOUR FIRST STEP</span>
@@ -100,11 +100,21 @@ export function DashboardView({ data }: { data: Dashboard }) {
           </CommandForm>
         </section>
       )}
+      {!data.canCreateOrganization && data.organizations.length === 0 && (
+        <section className="panel">
+          <h2>Your event assignments</h2>
+          <p>
+            Use the email your Admin invited. Your role and gate are set by the
+            Admin. One active shift per account; your colleagues can work
+            alongside you.
+          </p>
+        </section>
+      )}
       <div className="section-heading">
         <h2>
           All gatherings <span className="count">{data.events.length}</span>
         </h2>
-        <span className="muted">Your organized and assigned events</span>
+        <span className="muted">Your administered and assigned events</span>
       </div>
       {data.events.length === 0 ? (
         <section className="empty-state">
@@ -119,7 +129,11 @@ export function DashboardView({ data }: { data: Dashboard }) {
       ) : (
         <div className="event-grid">
           {data.events.map((e, i) => (
-            <Link className="event-card" href={`/events/${e.id}`} key={e.id}>
+            <Link
+              className="event-card"
+              href={e.is_admin ? `/events/${e.id}` : `/work/${e.id}`}
+              key={e.id}
+            >
               <div className={`event-cover cover-${i % 3}`}>
                 <span className="event-monogram">{e.title.slice(0, 1)}</span>
                 <span
@@ -135,7 +149,7 @@ export function DashboardView({ data }: { data: Dashboard }) {
               </div>
               <div className="event-body">
                 <span className="eyebrow">
-                  {e.is_admin ? 'ORGANIZER' : 'EVENT TEAM'}
+                  {e.is_admin ? 'ADMIN' : e.role?.toUpperCase()}
                 </span>
                 <h3>{e.title}</h3>
                 <p>

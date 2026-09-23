@@ -74,3 +74,7 @@ To verify migrations from scratch, `npx supabase db reset --local --no-seed` res
 Before each phase, identify scope, affected files, database changes, risks and definition of done. Use strict TypeScript, validated server inputs, explicit database permissions, migrations and append-only attendance history. Run applicable tests, lint and type checks before completing an implementation phase. Never commit credentials or production guest data.
 
 Do not deploy this first slice as the full MVP. The remaining release gates are documented in `docs/IMPLEMENTATION.md`.
+
+## Guest import and Invitation Studio
+
+Open an event as Admin, then select **Manage guests & bulk import** or **Invitation Studio**. See [the workflow guide](docs/PHASES-A-B.md). Run `npm run test:planning` against the local stack for import and design permission checks; Storage must be enabled for the browser photo-upload test.

@@ -62,6 +62,14 @@ export function EventView({
           </Link>
         </div>
       </div>
+      <nav className="planning-nav" aria-label="Event planning">
+        <Link className="button secondary" href={`/events/${event.id}/guests`}>
+          Manage guests & bulk import
+        </Link>
+        <Link className="button secondary" href={`/events/${event.id}/studio`}>
+          Invitation Studio
+        </Link>
+      </nav>
       <div className="event-status-row">
         <span className={`badge ${event.status === 'active' ? 'green' : ''}`}>
           {event.status === 'active'

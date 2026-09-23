@@ -53,3 +53,7 @@ Verification: 15 staff-access integration checks, 19 admission integration check
 CSV/XLSX import and duplicate review; normalized tables/categories/custom fields; richer invitation templates and RSVP; extra gates and invitation-based team onboarding; exit/re-entry; supervisor search/manual entry/overrides/corrections. Then M3 adds controlled offline reconciliation, reporting and platform account administration.
 
 Before production: complete the full permission/retention/export/offline model, MFA for privileged users, shared public-rate limits, privacy-safe hosting logs, CSP and other deployment hardening, validated email delivery, accessibility audit, actual Android/iPhone camera rehearsal, load tests at the documented pilot envelope, and backup/restore evidence. These are release tasks, not claims of completed work.
+
+## Phases A and B
+
+The owner approved guest import and Invitation Studio. See [Phases A and B](PHASES-A-B.md) for workflows, security boundaries, verification and remaining roadmap scope. CSV/XLSX import, guest search/edit/export, six card layouts, themes, photo upload, versioned publication and individual PNG/PDF downloads are implemented.

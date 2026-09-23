@@ -1,6 +1,6 @@
 # M2: Admin, event teams and invitation studio
 
-Status: Admin/team access and operational shifts are implemented locally and undergoing release verification. Invitation studio and bulk import remain planned. The owner approved one active event/session per staff account, allowing different staff to work together.
+Status: Admin/team access and operational shifts are live. The owner approved Phases A and B; bulk guest import and Invitation Studio are implemented and under release verification. See PHASES-A-B.md for the delivered scope. The owner approved one active event/session per staff account, allowing different staff to work together.
 
 ## Delivery order
 

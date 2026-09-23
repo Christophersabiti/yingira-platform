@@ -1661,3 +1661,283 @@ td small,
     font-size: 2rem;
   }
 }
+
+/* Guest planning and Invitation Studio */
+.planning-nav,
+.job-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+  justify-content: space-between;
+}
+.planning-nav {
+  justify-content: flex-start;
+}
+.import-panel {
+  border-top: 1px solid #dce2d8;
+  margin-top: 24px;
+  padding-top: 24px;
+}
+.import-preview {
+  max-height: 480px;
+  overflow: auto;
+  margin: 20px 0;
+}
+.table-scroll {
+  overflow: auto;
+}
+.import-preview input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+}
+.studio-layout {
+  display: grid;
+  grid-template-columns: minmax(310px, 420px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.studio-controls fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.studio-controls legend {
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+.studio-controls details {
+  border-top: 1px solid #dce2d8;
+  padding: 18px 0;
+}
+.studio-controls summary,
+details.panel summary {
+  cursor: pointer;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.studio-controls label {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+.studio-controls textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #bcc9be;
+  border-radius: 8px;
+  resize: vertical;
+  background: white;
+  color: #24392b;
+  font: inherit;
+}
+.studio-controls input[type='color'] {
+  height: 44px;
+  width: 100%;
+}
+.studio-controls button {
+  margin: 4px 0;
+}
+.template-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 18px 0;
+}
+.template-choice {
+  border: 1px solid #d2dacf;
+  border-radius: 10px;
+  background: white;
+  padding: 12px;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+  color: #24392b;
+}
+.template-choice.selected {
+  outline: 3px solid #335b40;
+  outline-offset: 1px;
+}
+.template-choice small {
+  line-height: 1.4;
+}
+.template-swatch {
+  height: 72px;
+  border: 3px double;
+  display: grid;
+  place-items: center;
+  font-family: Georgia, serif;
+  font-size: 28px;
+}
+.card-preview-scroll {
+  overflow: auto;
+  padding: 8px 0 24px;
+}
+.card-export {
+  width: 500px;
+  max-width: 100%;
+  margin: auto;
+}
+.designed-card {
+  width: 500px;
+  max-width: 100%;
+  margin: auto;
+  background: var(--card-bg);
+  color: var(--card-ink);
+  text-align: center;
+  overflow: hidden;
+  border: 1px solid var(--card-accent);
+  box-shadow: 0 14px 45px #17261918;
+  position: relative;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.design-content {
+  padding: 32px 34px;
+}
+.designed-card h1 {
+  font:
+    normal 38px/1.14 Georgia,
+    serif;
+  color: inherit;
+  margin: 12px 0 18px;
+  letter-spacing: -1px;
+}
+.designed-card p {
+  color: inherit;
+  margin: 10px 0;
+  font-size: 15px;
+  white-space: pre-line;
+}
+.design-hosts {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px !important;
+}
+.design-message {
+  font-style: italic;
+}
+.design-ornament {
+  font-size: 34px;
+  color: var(--card-accent);
+}
+.design-rule {
+  height: 1px;
+  width: 70px;
+  background: var(--card-accent);
+  margin: 22px auto;
+}
+.design-recipient {
+  font-size: 19px !important;
+}
+.design-photo {
+  height: 230px;
+  overflow: hidden;
+  position: relative;
+  background: var(--card-bg);
+}
+.design-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.design-qr {
+  background: white;
+  color: #151515;
+  padding: 12px;
+  width: 190px;
+  margin: 20px auto 12px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  border-radius: 8px;
+}
+.design-qr img {
+  width: 144px;
+  height: 144px;
+  display: block;
+}
+.design-qr small {
+  font:
+    11px/1.4 Arial,
+    sans-serif;
+}
+.design-extra {
+  font-size: 13px !important;
+}
+.design-footer {
+  display: block;
+  letter-spacing: 1px;
+  margin-top: 22px;
+  font:
+    10px Arial,
+    sans-serif;
+}
+.design-sample {
+  padding: 22px;
+  border: 1px dashed var(--card-accent);
+  margin: 18px 0;
+  font:
+    12px Arial,
+    sans-serif;
+}
+.design-classic .design-content {
+  border: 3px double var(--card-accent);
+  margin: 14px;
+}
+.design-botanical .design-photo {
+  margin: 22px 55px 0;
+  border-radius: 160px 160px 8px 8px;
+  height: 245px;
+}
+.design-evening {
+  border: 8px double var(--card-accent);
+}
+.design-evening h1 {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 32px;
+}
+.design-floral .design-content {
+  border-radius: 80px 80px 0 0;
+  border: 2px solid var(--card-accent);
+  margin: 14px;
+}
+.design-introduction .design-content {
+  border-top: 12px double var(--card-accent);
+  border-bottom: 12px double var(--card-accent);
+}
+.design-portrait .design-photo {
+  height: 310px;
+}
+.design-artwork .design-photo {
+  height: 500px;
+}
+@media (max-width: 1050px) {
+  .studio-layout {
+    grid-template-columns: 1fr;
+  }
+  .studio-preview {
+    order: -1;
+  }
+  .card-export {
+    margin: 0 auto;
+  }
+}
+@media (max-width: 560px) {
+  .guest-page .designed-card {
+    width: 100%;
+  }
+  .design-content {
+    padding: 24px;
+  }
+  .designed-card h1 {
+    font-size: 32px;
+  }
+  .planning-nav .button {
+    width: 100%;
+  }
+}

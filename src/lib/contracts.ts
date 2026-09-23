@@ -172,6 +172,8 @@ export type EventDetail = {
   }[];
 };
 export type PublicInvitation = {
+  eventId: string;
+  design: unknown;
   guestName: string;
   title: string;
   venue: string;

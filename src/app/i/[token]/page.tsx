@@ -1,3 +1,5 @@
+import { InvitationCard } from '@/components/invitation-card';
+import { designSchema } from '@/lib/planning';
 import Image from 'next/image';
 import QRCode from 'qrcode';
 import { invitation } from '@/server/invitation';
@@ -24,10 +26,26 @@ export default async function InvitationPage({
     );
   const qr = await QRCode.toDataURL(`${appOrigin()}/i/${token}`, {
     width: 320,
-    margin: 2,
+    margin: 4,
     errorCorrectionLevel: 'M',
     color: { dark: '#24392b', light: '#ffffff' },
   });
+  const design = designSchema.safeParse(data.design);
+  if (design.success)
+    return (
+      <main className="guest-page">
+        <InvitationCard
+          design={design.data}
+          details={data}
+          qr={qr}
+          photoUrl={
+            design.data.assetId
+              ? `/api/planning/assets?eventId=${data.eventId}&assetId=${design.data.assetId}&token=${token}`
+              : undefined
+          }
+        />
+      </main>
+    );
   return (
     <main className="guest-page">
       <div className="guest-invitation">

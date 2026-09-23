@@ -30,9 +30,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: node_modules/.bin/supabase start -x realtime,storage-api,imgproxy,postgres-meta,studio,edge-runtime,logflare,vector,supavisor > /tmp/yingira-start.log 2>&1
+      - run: node_modules/.bin/supabase start -x realtime,imgproxy,postgres-meta,studio,edge-runtime,logflare,vector,supavisor > /tmp/yingira-start.log 2>&1
       - run: npm run setup:local
       - run: npm run test:staff
+      - run: npm run test:planning
       - run: npm run test:db
       - run: node_modules/.bin/supabase db advisors --local --type security --level warn --fail-on error
       - run: node_modules/.bin/playwright install --with-deps chromium

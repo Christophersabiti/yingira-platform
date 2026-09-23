@@ -306,10 +306,18 @@ export function Scanner({
             {!unknown && (
               <>
                 <p className="phone-mask">
-                  Phone ending in <strong>{scan.phoneSuffix}</strong>
+                  {scan.phoneSuffix ? (
+                    <>
+                      Phone ending in <strong>{scan.phoneSuffix}</strong>
+                    </>
+                  ) : (
+                    'No phone number provided'
+                  )}
                 </p>
                 <p className="muted">
-                  Confirm the guest’s name and phone digits.
+                  {scan.phoneSuffix
+                    ? 'Confirm the guest’s name and phone digits.'
+                    : 'Confirm the guest’s name against their invitation. Ask the supervisor if uncertain.'}
                 </p>
                 <div className="scan-counts">
                   <div>

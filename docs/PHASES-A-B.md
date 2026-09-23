@@ -36,3 +36,9 @@ Dependencies are pinned. ExcelJS's UUID dependency is overridden to patched 11.1
 - Lint, typecheck, formatting, build and dependency/security checks are run before release.
 
 The broader plan's RSVP, automatic guest messaging, named households, seating entities, budgets, suppliers, offline admission, billing, bulk export jobs and embedded Adobe/Canva editor remain separate scope.
+
+## Production release
+
+Deployed to https://yingira-platform.vercel.app with migration `20260923204651_guest_import_invitation_studio`. The signed-in Admin's live guest-management page and six-layout studio were verified, including the existing guest's QR preview. No production guest data was replaced or test-imported.
+
+Supabase reports the intentional [authenticated SECURITY DEFINER command boundaries](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable); authorization and isolation are tested. The existing [leaked-password protection setting](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection) remains disabled and is a separate account-security follow-up.

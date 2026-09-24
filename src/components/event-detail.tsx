@@ -63,6 +63,11 @@ export function EventView({
         </div>
       </div>
       <nav className="planning-nav" aria-label="Event planning">
+        {event.isAdmin && (
+          <Link className="button" href={`/events/${event.id}/plan`}>
+            Plan event & billing
+          </Link>
+        )}
         <Link
           className="button secondary"
           href={`/events/${event.id}/operations`}

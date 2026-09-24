@@ -82,3 +82,7 @@ Open an event as Admin, then select **Manage guests & bulk import** or **Invitat
 ## Responses, communication and event operations
 
 Open an event as Admin, then select **Responses, seating & email**. Staff use **Guest lookup & movements** during an active shift. See [the C/D workflow and email activation guide](docs/PHASES-C-D.md). Run `npm run test:operations` against the local stack for RSVP, seating, movements and mail-queue checks. Email sending requires a verified Resend sender and server-only production credentials.
+
+## Whole-event planning and commercial tools
+
+Open **Plan event & billing** from an event. Manage tasks, programme, suppliers, budgets/deposits, client reviews and invoices; use **Business** for planner branding, packages, prepaid Yingira subscriptions and WhatsApp scheduling. Uganda/UGX and Pesapal are the initial payment target. See [the E/F workflow and provider setup guide](docs/PHASES-E-F.md). Run `npm run test:commerce` locally. Checkout and message dispatch require real provider configuration; no subscription prices or campaigns are published automatically.

@@ -2,6 +2,12 @@ import type { NextConfig } from 'next';
 const config: NextConfig = {
   poweredByHeader: false,
   devIndicators: false,
+  experimental: {
+    turbopackFileSystemCacheForDev:
+      process.env.YINGIRA_DISABLE_DISK_CACHE !== '1',
+    turbopackFileSystemCacheForBuild:
+      process.env.YINGIRA_DISABLE_DISK_CACHE !== '1',
+  },
   turbopack: { root: process.cwd() },
   logging: { incomingRequests: false },
   async headers() {

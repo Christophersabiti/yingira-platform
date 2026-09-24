@@ -21,7 +21,8 @@
     "setup:hosted": "node --import tsx scripts/setup-hosted.ts",
     "test:staff": "node --env-file=.env.local --import tsx scripts/test-staff.ts",
     "test:planning": "node --env-file=.env.local --import tsx scripts/test-planning.ts",
-    "test:operations": "node --env-file=.env.local --import tsx scripts/test-operations.ts"
+    "test:operations": "node --env-file=.env.local --import tsx scripts/test-operations.ts",
+    "test:commerce": "node --env-file=.env.local --import tsx scripts/test-commerce.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

@@ -2050,3 +2050,264 @@ details.panel summary {
     padding: 0;
   }
 }
+
+/* Planning workspace */
+.plan-tabs {
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.plan-tabs button {
+  white-space: nowrap;
+}
+.planner-status {
+  min-height: 1.4rem;
+}
+.planner-search {
+  display: block;
+  max-width: 32rem;
+  margin: 1.5rem 0;
+}
+.plan-form {
+  background: #fff;
+  border: 1px solid var(--line, #dfe5dd);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.plan-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+.plan-form input,
+.plan-form select,
+.plan-form textarea {
+  width: 100%;
+  min-width: 0;
+}
+.plan-form .form-wide {
+  grid-column: 1 / -1;
+}
+.plan-form h3,
+.plan-form p {
+  margin: 0;
+}
+.plan-form .check-label {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+}
+.plan-form .check-label input {
+  width: auto;
+}
+.plan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #e6eae4;
+  overflow-wrap: anywhere;
+}
+.plan-row:last-child {
+  border-bottom: 0;
+}
+.plan-row h3 {
+  margin: 0 0 0.4rem;
+}
+.plan-row p {
+  margin: 0.45rem 0;
+}
+.row-actions,
+.form-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.invoice-line {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 3fr) minmax(4rem, 1fr) minmax(6rem, 1.5fr)
+    auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin: 1rem 0;
+}
+.preserve-lines {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.print-invoice {
+  display: none;
+}
+.client-portal {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: #fff;
+  border-top: 6px solid #315b40;
+  border-radius: 12px;
+  box-shadow: 0 8px 45px #203f2810;
+}
+.client-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.client-brand img {
+  object-fit: contain;
+}
+.client-brand strong {
+  font-size: 1.5rem;
+}
+.client-portal table {
+  width: 100%;
+}
+.client-portal footer {
+  margin-top: 2rem;
+  color: #687368;
+}
+.error-message {
+  color: #923d2a;
+}
+@media (max-width: 760px) {
+  .plan-form {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  .plan-row {
+    flex-direction: column;
+  }
+  .invoice-line {
+    grid-template-columns: 1fr 1fr;
+  }
+  .invoice-line label:first-child {
+    grid-column: 1 / -1;
+  }
+  .client-portal {
+    margin: 1rem;
+    padding: 1.25rem;
+  }
+}
+@media print {
+  .planner-screen,
+  .no-print,
+  .client-portal form {
+    display: none !important;
+  }
+  .print-invoice {
+    display: block !important;
+    color: #111;
+  }
+  .workspace-main > main > .print-invoice {
+    display: block !important;
+  }
+  .print-invoice table {
+    width: 100%;
+  }
+  .print-invoice th,
+  .print-invoice td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  .client-portal {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+  }
+}
+.package-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.package-card {
+  border: 1px solid #dde6da;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+@media print {
+  body:has(.print-invoice) .sidebar,
+  body:has(.print-invoice) .topbar,
+  body:has(.print-invoice) .workspace-footer {
+    display: none !important;
+  }
+  body:has(.print-invoice) .workspace {
+    display: block;
+  }
+  body:has(.print-invoice) .workspace-main {
+    margin: 0;
+  }
+  body:has(.print-invoice) .workspace-main main {
+    padding: 0;
+  }
+}
+.plan-form textarea {
+  min-height: 92px;
+  padding: 12px 14px;
+  border: 1px solid #d8dfd3;
+  border-radius: 8px;
+  font: inherit;
+  color: inherit;
+  resize: vertical;
+}
+.plan-form button:not([class]),
+.panel button:not([class]),
+.client-portal button:not([class]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #315b40;
+  color: white;
+  border: 1px solid #315b40;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.plan-form button:not([class]):disabled,
+.panel button:not([class]):disabled,
+.client-portal button:not([class]):disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.client-portal {
+  overflow-wrap: anywhere;
+}
+.planner-screen .metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.planner-screen .metric {
+  min-width: 0;
+}
+.planner-screen .metric strong {
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  overflow-wrap: anywhere;
+}
+.plan-tabs button {
+  padding: 0.65rem 0.8rem;
+  border-radius: 8px;
+}
+.plan-tabs button.selected {
+  background: #e8eedf;
+}
+@media (max-width: 900px) {
+  .planner-screen .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .planner-screen .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

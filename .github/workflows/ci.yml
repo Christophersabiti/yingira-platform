@@ -34,6 +34,7 @@ jobs:
       - run: npm run setup:local
       - run: npm run test:staff
       - run: npm run test:planning
+      - run: npm run test:operations
       - run: npm run test:db
       - run: node_modules/.bin/supabase db advisors --local --type security --level warn --fail-on error
       - run: node_modules/.bin/playwright install --with-deps chromium

@@ -1,4 +1,5 @@
 'use client';
+import { GateOperations } from './gate-operations';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -60,9 +61,12 @@ export function StaffWorkspace({
   }
   async function end() {
     if (busy) return;
-    if (sessionStorage.getItem(`yingira-pending:${userId}:${event.id}`)) {
+    if (
+      sessionStorage.getItem(`yingira-pending:${userId}:${event.id}`) ||
+      sessionStorage.getItem(`yingira-operation-pending:${userId}:${event.id}`)
+    ) {
       setError(
-        'Recover the pending admission in the scanner before ending your shift.',
+        'Recover the pending admission or gate operation before ending your shift.',
       );
       setScanning(true);
       return;
@@ -223,7 +227,7 @@ export function StaffWorkspace({
                       </div>
                     ))}
                   </div>
-                  <h3>Recent arrivals</h3>
+                  <h3>Recent gate activity</h3>
                   <p className="muted">
                     Updates every 20 seconds. All times use your device
                     timezone.
@@ -234,7 +238,13 @@ export function StaffWorkspace({
                         <div key={r.id}>
                           <strong>{r.guest_name}</strong>
                           <span>
-                            {r.quantity} admitted · {r.gate_name}
+                            {r.quantity}{' '}
+                            {r.kind === 'EXIT'
+                              ? 'exited'
+                              : r.kind === 'REENTRY'
+                                ? 're-entered'
+                                : 'admitted'}{' '}
+                            · {r.gate_name}
                           </span>
                           <time>
                             {new Date(r.accepted_at).toLocaleTimeString()}
@@ -251,6 +261,13 @@ export function StaffWorkspace({
               )}
             </section>
           )}
+          <GateOperations
+            eventId={event.id}
+            userId={userId}
+            leaseId={leaseId}
+            role={role}
+            gates={event.gates}
+          />
           {scanning && (
             <ScannerClient
               userId={userId}

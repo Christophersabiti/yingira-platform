@@ -1,3 +1,4 @@
+import type { HouseholdMember } from './operations';
 import { z } from 'zod';
 const uuid = z.string().uuid();
 const token = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
@@ -168,10 +169,15 @@ export type EventDetail = {
     guest_name: string;
     quantity: number;
     accepted_at: string;
+    kind: 'INITIAL_ENTRY' | 'EXIT' | 'REENTRY';
     gate_name: string;
   }[];
 };
 export type PublicInvitation = {
+  rsvpEnabled: boolean;
+  rsvpDeadline: string | null;
+  responseRevision: number;
+  members: HouseholdMember[];
   eventId: string;
   design: unknown;
   guestName: string;

@@ -63,6 +63,12 @@ export function EventView({
         </div>
       </div>
       <nav className="planning-nav" aria-label="Event planning">
+        <Link
+          className="button secondary"
+          href={`/events/${event.id}/operations`}
+        >
+          Responses, seating & email
+        </Link>
         <Link className="button secondary" href={`/events/${event.id}/guests`}>
           Manage guests & bulk import
         </Link>
@@ -111,11 +117,7 @@ export function EventView({
                 event.metrics.admitted,
                 'Initial entries recorded',
               ],
-              [
-                'Estimated inside',
-                event.metrics.inside,
-                'Initial arrivals only',
-              ],
+              ['Estimated inside', event.metrics.inside, 'Entries minus exits'],
             ].map(([label, count, note]) => (
               <div className="metric" key={label}>
                 <span>{label}</span>
@@ -141,7 +143,7 @@ export function EventView({
               className={tab === 'activity' ? 'selected' : ''}
               onClick={() => setTab('activity')}
             >
-              Recent arrivals
+              Recent gate activity
             </button>
           </div>
           {tab === 'guests' && (
@@ -420,7 +422,7 @@ export function EventView({
           {tab === 'activity' && (
             <section className="panel">
               <div className="section-heading">
-                <h2>Recent arrivals</h2>
+                <h2>Recent gate activity</h2>
                 <span className="live-label">Updates every 5 seconds</span>
               </div>
               {event.recent.length === 0 ? (
@@ -437,7 +439,12 @@ export function EventView({
                       <div>
                         <strong>{r.guest_name}</strong>
                         <small>
-                          {r.quantity} {r.quantity === 1 ? 'person' : 'people'}{' '}
+                          {r.quantity}{' '}
+                          {r.kind === 'EXIT'
+                            ? 'exited'
+                            : r.kind === 'REENTRY'
+                              ? 're-entered'
+                              : 'admitted'}{' '}
                           · {r.gate_name}
                         </small>
                       </div>

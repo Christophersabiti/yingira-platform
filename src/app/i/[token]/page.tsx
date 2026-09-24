@@ -1,3 +1,4 @@
+import { GuestRsvp } from '@/components/household-response';
 import { InvitationCard } from '@/components/invitation-card';
 import { designSchema } from '@/lib/planning';
 import Image from 'next/image';
@@ -30,6 +31,15 @@ export default async function InvitationPage({
     errorCorrectionLevel: 'M',
     color: { dark: '#24392b', light: '#ffffff' },
   });
+  const response = data.rsvpEnabled ? (
+    <GuestRsvp
+      token={token}
+      capacity={data.capacity}
+      members={data.members}
+      revision={data.responseRevision}
+      deadline={data.rsvpDeadline}
+    />
+  ) : null;
   const design = designSchema.safeParse(data.design);
   if (design.success)
     return (
@@ -44,6 +54,7 @@ export default async function InvitationPage({
               : undefined
           }
         />
+        {response}
       </main>
     );
   return (
@@ -98,6 +109,7 @@ export default async function InvitationPage({
           WITH CARE, THROUGH <strong>yingira.</strong>
         </footer>
       </div>
+      {response}
     </main>
   );
 }

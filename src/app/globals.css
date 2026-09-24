@@ -1979,3 +1979,74 @@ details.panel summary {
   width: 18px;
   height: 18px;
 }
+
+.guest-rsvp {
+  width: 700px;
+  max-width: 100%;
+  margin: 32px auto;
+  text-align: left;
+}
+.household-member {
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+  margin-bottom: 16px;
+}
+.table-capacity-row {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding: 16px 0;
+}
+.message-preview {
+  border: 1px solid var(--line);
+  padding: 24px;
+  margin: 20px 0;
+}
+.block {
+  display: block;
+}
+.lookup-result {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 16px;
+  text-align: left;
+  border-radius: 12px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.print-seating {
+  display: none;
+}
+@media print {
+  body:has(.print-seating) .sidebar,
+  body:has(.print-seating) .topbar,
+  body:has(.print-seating) .app-header,
+  body:has(.print-seating) .workspace-main > main > :not(.print-seating),
+  body:has(.print-seating) .workspace-footer {
+    display: none !important;
+  }
+  body:has(.print-seating) .print-seating {
+    display: block;
+    color: #000;
+  }
+  .print-seating > div {
+    break-inside: avoid;
+  }
+}
+
+@media print {
+  body:has(.print-seating) .workspace {
+    display: block;
+  }
+  body:has(.print-seating) .workspace-main {
+    margin: 0;
+  }
+  body:has(.print-seating) .workspace-main main {
+    padding: 0;
+  }
+}

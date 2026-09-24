@@ -78,3 +78,7 @@ Do not deploy this first slice as the full MVP. The remaining release gates are 
 ## Guest import and Invitation Studio
 
 Open an event as Admin, then select **Manage guests & bulk import** or **Invitation Studio**. See [the workflow guide](docs/PHASES-A-B.md). Run `npm run test:planning` against the local stack for import and design permission checks; Storage must be enabled for the browser photo-upload test.
+
+## Responses, communication and event operations
+
+Open an event as Admin, then select **Responses, seating & email**. Staff use **Guest lookup & movements** during an active shift. See [the C/D workflow and email activation guide](docs/PHASES-C-D.md). Run `npm run test:operations` against the local stack for RSVP, seating, movements and mail-queue checks. Email sending requires a verified Resend sender and server-only production credentials.

@@ -142,7 +142,7 @@ test('organizer sees the usher timestamp and API denies cross-origin mutation', 
   await login(page, fixture.ownerEmail);
   await page.goto(`/events/${fixture.eventId}`);
   await page
-    .getByRole('button', { name: 'Recent arrivals', exact: true })
+    .getByRole('button', { name: 'Recent gate activity', exact: true })
     .click();
   await expect(
     page.locator('.activity-list').getByText('Browser Journey Guest'),

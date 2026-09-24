@@ -20,7 +20,8 @@
     "seed:demo": "node --env-file=.env.local --import tsx scripts/seed-demo.ts",
     "setup:hosted": "node --import tsx scripts/setup-hosted.ts",
     "test:staff": "node --env-file=.env.local --import tsx scripts/test-staff.ts",
-    "test:planning": "node --env-file=.env.local --import tsx scripts/test-planning.ts"
+    "test:planning": "node --env-file=.env.local --import tsx scripts/test-planning.ts",
+    "test:operations": "node --env-file=.env.local --import tsx scripts/test-operations.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

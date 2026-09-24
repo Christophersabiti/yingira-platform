@@ -1,4 +1,5 @@
 import jsQR from 'jsqr';
+import JSZip from 'jszip';
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import ExcelJS from 'exceljs';
@@ -81,14 +82,25 @@ test('Admin imports XLSX guests, reviews duplicates, publishes a photo design an
     .getByRole('button', { name: 'Publish design', exact: true })
     .click();
   await expect(page.getByRole('status')).toContainText('Published.');
+  await page.getByRole('button', { name: /A & B Botanical/ }).click();
+  await page.setViewportSize({ width: 900, height: 1000 });
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download PNG', exact: true }).click();
   const downloaded = await download;
+  await downloaded.saveAs('.local/invitation-export-fixed.png');
   const path = await downloaded.path();
   const pixels = await sharp(path!)
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
+  expect(pixels.info.width).toBe(1000);
+  const middle = Math.floor(pixels.info.height / 2);
+  const left = middle * pixels.info.width * 4;
+  const right = (middle * pixels.info.width + pixels.info.width - 1) * 4;
+  expect([...pixels.data.subarray(left, left + 4)]).toEqual([
+    ...pixels.data.subarray(right, right + 4),
+  ]);
+  expect(pixels.data[left + 3]).toBe(255);
   const decoded = jsQR(
     new Uint8ClampedArray(pixels.data),
     pixels.info.width,
@@ -97,11 +109,85 @@ test('Admin imports XLSX guests, reviews duplicates, publishes a photo design an
   expect(decoded?.data).toMatch(
     /^http:\/\/localhost:3000\/i\/[A-Za-z0-9_-]{43}$/,
   );
+  expect(
+    Math.abs(
+      (decoded!.location.topLeftCorner.x + decoded!.location.topRightCorner.x) /
+        2 -
+        500,
+    ),
+  ).toBeLessThan(5);
   expect(downloaded.suggestedFilename()).toMatch(/Import-Family.*\.png/);
   await expect(page.getByRole('status')).toContainText('Downloaded.');
   const pdf = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download 5×7 PDF' }).click();
   expect((await pdf).suggestedFilename()).toMatch(/\.pdf$/);
+  await page.getByLabel('Find guests for download').fill('Import Family');
+  await page
+    .getByRole('button', { name: 'Select matching guests', exact: true })
+    .click();
+  await page.getByLabel('Find guests for download').fill('');
+  const eligible = page.locator(
+    '.bulk-guest-option input:not(:disabled):not(:checked)',
+  );
+  await eligible.first().check();
+  const bulk = page.waitForEvent('download');
+  await page
+    .getByRole('button', {
+      name: 'Download selected invitations (ZIP)',
+      exact: true,
+    })
+    .click();
+  const archive = await bulk;
+  const zip = await JSZip.loadAsync(readFileSync((await archive.path())!));
+  const entries = Object.values(zip.files).filter((entry) => !entry.dir);
+  expect(entries).toHaveLength(2);
+  const qrValues = [];
+  for (const entry of entries) {
+    expect(entry.name).toMatch(/\.png$/);
+    const raw = await sharp(await entry.async('nodebuffer'))
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    expect(raw.info.width).toBe(1000);
+    const code = jsQR(
+      new Uint8ClampedArray(raw.data),
+      raw.info.width,
+      raw.info.height,
+    );
+    expect(code?.data).toMatch(
+      /^http:\/\/localhost:3000\/i\/[A-Za-z0-9_-]{43}$/,
+    );
+    qrValues.push(code!.data);
+  }
+  expect(new Set(qrValues).size).toBe(2);
+  expect(qrValues).toContain(decoded!.data);
+  await page.getByLabel('Bulk download format').selectOption('pdf');
+  const bulkPdf = page.waitForEvent('download');
+  await page
+    .getByRole('button', {
+      name: 'Download selected invitations (ZIP)',
+      exact: true,
+    })
+    .click();
+  const pdfArchive = await bulkPdf;
+  const pdfZip = await JSZip.loadAsync(
+    readFileSync((await pdfArchive.path())!),
+  );
+  const pdfEntries = Object.values(pdfZip.files).filter((entry) => !entry.dir);
+  expect(pdfEntries).toHaveLength(2);
+  for (const entry of pdfEntries) {
+    expect(entry.name).toMatch(/\.pdf$/);
+    expect((await entry.async('nodebuffer')).subarray(0, 4).toString()).toBe(
+      '%PDF',
+    );
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download PNG', exact: true }).click();
+  const mobileImage = await mobileDownload;
+  const mobileMeta = await sharp((await mobileImage.path())!).metadata();
+  expect(mobileMeta.width).toBe(1000);
+  expect(mobileMeta.height).toBe(pixels.info.height);
   await page.screenshot({ path: '.local/studio-desktop.png', fullPage: true });
   await page.goto(`/i/${f.token}`);
   await expect(

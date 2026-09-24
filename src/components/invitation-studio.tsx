@@ -2,6 +2,12 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import QRCode from 'qrcode';
+import {
+  renderInvitation,
+  saveInvitationBlob,
+  invitationFilename,
+  type ExportKind,
+} from './invitation-export';
 import { InvitationCard, type CardDetails } from './invitation-card';
 import {
   defaultDesign,
@@ -41,7 +47,14 @@ export function InvitationStudio({
     [qrResult, setQr] = useState({ link: '', image: '' }),
     [past, setPast] = useState<Design[]>([]),
     [future, setFuture] = useState<Design[]>([]);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkSearch, setBulkSearch] = useState('');
+  const [bulkKind, setBulkKind] = useState<ExportKind>('png');
+  const cancelExport = useRef(false);
+  const [exporting, setExporting] = useState(false);
+  const bulkGuests = initial.guests.filter((g) =>
+    g.name.toLowerCase().includes(bulkSearch.toLowerCase()),
+  );
   const saving = useRef(false);
   const changeCounter = useRef(0);
   const currentRevision = useRef(initial.revision);
@@ -117,53 +130,86 @@ export function InvitationStudio({
   const photoUrl = design.assetId
     ? `/api/planning/assets?eventId=${eventId}&assetId=${design.assetId}`
     : undefined;
-  async function download(kind: 'png' | 'pdf') {
-    if (!cardRef.current) return;
+  async function download(kind: ExportKind) {
     if (guestId && !link)
       throw Error(
         'This invitation is revoked or its link is unavailable. Reissue it before exporting.',
       );
     setStatus('Preparing your download…');
-    await document.fonts.ready;
-    await Promise.all(
-      Array.from(cardRef.current.querySelectorAll('img')).map((img) =>
-        img.decode(),
-      ),
-    );
-    const { toPng } = await import('html-to-image');
-    const png = await toPng(cardRef.current, {
-      pixelRatio: 2,
-      cacheBust: false,
-      backgroundColor: design.background,
+    const blob = await renderInvitation({
+      design,
+      details: {
+        ...event,
+        guestName: guest?.name || 'Your guest',
+        capacity: guest?.capacity || 2,
+        tableLabel: guest?.tableLabel || '',
+      },
+      photoUrl,
+      link,
+      kind,
     });
-    const filename = `yingira-${guest ? guest.name.replace(/[^\p{L}\p{N}]+/gu, '-') : 'sample'}`;
-    if (kind === 'png') {
-      const a = document.createElement('a');
-      a.download = filename + '.png';
-      a.href = png;
-      a.click();
-    } else {
-      const { jsPDF } = await import('jspdf');
-      const pdf = new jsPDF({ unit: 'mm', format: [127, 177.8] });
-      const ratio = cardRef.current.offsetHeight / cardRef.current.offsetWidth;
-      const width = Math.min(117, 167.8 / ratio);
-      if (guest && (width * 144) / cardRef.current.offsetWidth < 20)
-        throw Error(
-          'This card is too long for a scannable 5×7 print. Shorten the message or programme, or download PNG instead.',
-        );
-      pdf.addImage(
-        png,
-        'PNG',
-        (127 - width) / 2,
-        (177.8 - width * ratio) / 2,
-        width,
-        width * ratio,
-      );
-      pdf.save(filename + '.pdf');
-    }
+    saveInvitationBlob(
+      blob,
+      invitationFilename(guest?.name || 'sample') + '.' + kind,
+    );
     setStatus(
       'Downloaded. Printed cards do not update when the design changes.',
     );
+  }
+  async function downloadSelected() {
+    const selected = initial.guests.filter((g) => selectedIds.includes(g.id));
+    if (!selected.length || selected.length > 100)
+      throw Error('Select between 1 and 100 guests per ZIP.');
+    if (selected.some((g) => !links[g.id] || g.revoked))
+      throw Error(
+        'Remove revoked or unavailable invitations from your selection.',
+      );
+    cancelExport.current = false;
+    setExporting(true);
+    try {
+      const { default: JSZip } = await import('jszip');
+      const zip = new JSZip();
+      // Sequential rendering keeps only one full-size card in the DOM at a time.
+      for (let i = 0; i < selected.length; i++) {
+        if (cancelExport.current) {
+          setStatus('Bulk download cancelled. No ZIP was downloaded.');
+          return;
+        }
+        const g = selected[i];
+        setStatus(`Preparing invitation ${i + 1} of ${selected.length}…`);
+        const blob = await renderInvitation({
+          design,
+          details: {
+            ...event,
+            guestName: g.name,
+            capacity: g.capacity,
+            tableLabel: g.tableLabel,
+          },
+          photoUrl,
+          link: links[g.id],
+          kind: bulkKind,
+        });
+        zip.file(
+          invitationFilename(g.name, g.id) + '.' + bulkKind,
+          await blob.arrayBuffer(),
+        );
+      }
+      setStatus('Packing your invitations…');
+      const blob = await zip.generateAsync({
+        type: 'blob',
+        compression: 'STORE',
+      });
+      if (cancelExport.current) {
+        setStatus('Bulk download cancelled. No ZIP was downloaded.');
+        return;
+      }
+      saveInvitationBlob(blob, `yingira-invitations-${selected.length}.zip`);
+      setStatus(
+        `Downloaded ${selected.length} invitations in one ZIP. Each card has its own guest QR.`,
+      );
+    } finally {
+      setExporting(false);
+    }
   }
   return (
     <>
@@ -638,8 +684,107 @@ export function InvitationStudio({
               Keep downloaded guest cards private.
             </p>
           </div>
+          <div className="panel">
+            <h2>Download selected invitations</h2>
+            <p>
+              Select up to 100 guests per ZIP. Cards use the current draft and
+              each guest’s own QR. Keep this page open while preparing the
+              download.
+            </p>
+            <fieldset disabled={busy}>
+              <label>
+                Find guests for download
+                <input
+                  value={bulkSearch}
+                  onChange={(e) => setBulkSearch(e.target.value)}
+                />
+              </label>
+              <div className="support-actions">
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() =>
+                    setSelectedIds([
+                      ...new Set([
+                        ...selectedIds,
+                        ...bulkGuests
+                          .filter((g) => links[g.id] && !g.revoked)
+                          .map((g) => g.id),
+                      ]),
+                    ])
+                  }
+                >
+                  Select matching guests
+                </button>
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => setSelectedIds([])}
+                >
+                  Clear selection
+                </button>
+              </div>
+              <div className="bulk-guest-list">
+                {bulkGuests.map((g) => (
+                  <label className="bulk-guest-option" key={g.id}>
+                    <input
+                      type="checkbox"
+                      aria-label={`Download invitation for ${g.name}`}
+                      checked={selectedIds.includes(g.id)}
+                      disabled={!links[g.id] || g.revoked}
+                      onChange={(e) =>
+                        setSelectedIds((ids) =>
+                          e.target.checked
+                            ? [...ids, g.id]
+                            : ids.filter((id) => id !== g.id),
+                        )
+                      }
+                    />
+                    {g.name}
+                    {!links[g.id] || g.revoked ? ' · Unavailable' : ''}
+                  </label>
+                ))}
+              </div>
+              <label>
+                Bulk download format
+                <select
+                  value={bulkKind}
+                  onChange={(e) => setBulkKind(e.target.value as ExportKind)}
+                >
+                  <option value="png">PNG images</option>
+                  <option value="pdf">5×7 PDF files</option>
+                </select>
+              </label>
+              <p>
+                {selectedIds.length} selected
+                {selectedIds.length > 100
+                  ? ' · Maximum 100 per ZIP; reduce your selection.'
+                  : ''}
+              </p>
+              <button
+                type="button"
+                className="button"
+                disabled={!selectedIds.length || selectedIds.length > 100}
+                onClick={() => void task(downloadSelected)}
+              >
+                Download selected invitations (ZIP)
+              </button>
+            </fieldset>
+            {exporting && (
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => {
+                  cancelExport.current = true;
+                  setStatus('Cancelling after the current card…');
+                }}
+              >
+                Cancel download
+              </button>
+            )}
+          </div>
           <div className="card-preview-scroll">
-            <div ref={cardRef} className="card-export">
+            <div className="card-export">
               <InvitationCard
                 design={design}
                 details={{

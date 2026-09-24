@@ -16,7 +16,7 @@ Uploads accept JPEG, PNG and WebP up to 4 MB; the server validates and decodes t
 
 Save/publish are version-checked. Drafts are available only to event Admins. Published assets can be retrieved only with a valid invitation for that event or authenticated Admin access. The public invitation adapter returns only the published design. Changes preserve all QR tokens and attendance records. The existing token key fallback remains supported.
 
-Download one guest's PNG or 5×7-inch PDF from the studio. Downloads render locally in the browser; bulk ZIP/queued export, commercial print bleed/CMYK output and organization-wide reusable template libraries are not included in this increment. The PDF preserves aspect ratio and warns if a long layout would make a guest QR too small. Downloaded/printed cards do not update automatically after publication. Keep them private.
+Download one guest's PNG or 5×7-inch PDF from the studio, or select up to 100 guests and download their individual PNG/PDF invitations in one ZIP. Search and select matching guests, clear the selection, and cancel while preparing an archive. Revoked or unavailable invitations cannot be selected. ZIP filenames include guest IDs to avoid collisions. Bulk downloads use a snapshot of the current draft and require the page to remain open; no messages are sent. Downloads render at a fixed 500 CSS-pixel width and 2× resolution, independently of the preview margins or mobile viewport. Commercial print bleed/CMYK output, unattended export jobs and organization-wide reusable template libraries are not included in this increment. The PDF preserves aspect ratio and warns if a long layout would make a guest QR too small. Downloaded/printed cards do not update automatically after publication. Keep them private.
 
 ## Security and implementation
 
@@ -35,7 +35,7 @@ Dependencies are pinned. ExcelJS's UUID dependency is overridden to patched 11.1
 - Downloaded PNG QR decoded automatically; mobile guest page checked for horizontal overflow. Physical phone camera and printed-card rehearsal still require a real-device pilot.
 - Lint, typecheck, formatting, build and dependency/security checks are run before release.
 
-The broader plan's RSVP, automatic guest messaging, named households, seating entities, budgets, suppliers, offline admission, billing, bulk export jobs and embedded Adobe/Canva editor remain separate scope.
+The broader plan's RSVP, automatic guest messaging, named households, seating entities, budgets, suppliers, offline admission, billing, unattended bulk export jobs and embedded Adobe/Canva editor remain separate scope.
 
 ## Production release
 

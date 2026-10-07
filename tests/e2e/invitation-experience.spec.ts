@@ -100,13 +100,11 @@ test('customized shared invitation preserves photo privacy, calendar, offline QR
   })
     .png()
     .toBuffer();
-  await page
-    .getByLabel('Bride portrait', { exact: true })
-    .setInputFiles({
-      name: 'bride.png',
-      mimeType: 'image/png',
-      buffer: portrait,
-    });
+  await page.getByLabel('Bride portrait', { exact: true }).setInputFiles({
+    name: 'bride.png',
+    mimeType: 'image/png',
+    buffer: portrait,
+  });
   await expect(page.getByRole('status')).toContainText('Draft saved', {
     timeout: 15000,
   });
@@ -130,8 +128,18 @@ test('customized shared invitation preserves photo privacy, calendar, offline QR
     await guest.locator('summary.inv-cover').click();
     await expect(guest.locator('.inv-envelope')).toHaveAttribute('open', '');
     await expect(
-      guest.getByRole('heading', { name: /Amina.*Daniel/ }),
+      guest.getByRole('heading', { name: /Daniel.*Amina/ }),
     ).toBeVisible();
+    await expect(guest.locator('.inv-couple-portraits figcaption')).toHaveText([
+      'Daniel',
+      'Amina',
+    ]);
+    await expect(
+      guest.locator('.inv-couple-portraits figure').first().locator('img'),
+    ).toHaveAttribute('alt', 'Daniel');
+    await expect(guest.locator('.inv-topbar > span')).toHaveText(
+      'Daniel & Amina',
+    );
     for (const name of [
       'Amina',
       'Daniel',

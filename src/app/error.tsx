@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 export default function ErrorPage({ reset }: { reset: () => void }) {
   return (
     <main className="standalone">
@@ -10,9 +11,9 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
       <button className="button" onClick={reset}>
         Try again
       </button>
-      <a href="/login" className="text-button">
+      <Link href="/login" className="text-button">
         Sign in
-      </a>
+      </Link>
     </main>
   );
 }

@@ -23,7 +23,7 @@ export function InvitationCard({
   qr?: string;
   preview?: boolean;
 }) {
-  const names = [design.bride, design.groom].filter(Boolean).join(' & ');
+  const names = [design.groom, design.bride].filter(Boolean).join(' & ');
   return (
     <article
       className={`designed-card design-${design.template} ${design.mode === 'artwork' ? 'design-artwork' : ''}`}

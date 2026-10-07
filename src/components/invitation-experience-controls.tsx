@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 import type { Design, InvitationExperience } from '@/lib/planning';
 export function ExperienceControls({
   design,
@@ -128,20 +129,64 @@ export function ExperienceControls({
         </p>
       </details>
       <details open>
-        <summary>Bride, groom & closing portraits</summary>
+        <summary>Groom, bride & closing portraits</summary>
+        <p>
+          The groom appears first, followed by the bride. Each portrait stays
+          paired with its own name.
+        </p>
+        <button
+          type="button"
+          className="text-button"
+          onClick={() =>
+            onChange({
+              ...design,
+              groom: design.bride,
+              bride: design.groom,
+              experience: {
+                ...e,
+                groomAssetId: e.brideAssetId,
+                brideAssetId: e.groomAssetId,
+              },
+            })
+          }
+        >
+          Swap groom and bride names & portraits
+        </button>
+        <p>
+          Use swap if the names and photos were entered under the opposite
+          roles.
+        </p>
         <p>
           The main couple photo below opens the invitation. Add separate
           portraits and a different closing photograph here.
         </p>
         {(
           [
-            ['brideAssetId', 'Bride portrait'],
             ['groomAssetId', 'Groom portrait'],
+            ['brideAssetId', 'Bride portrait'],
             ['closingAssetId', 'Closing couple photo'],
           ] as const
         ).map(([key, label]) => (
           <label key={key}>
             {label}
+            {key !== 'closingAssetId' && (
+              <span className="portrait-owner">
+                {key === 'groomAssetId'
+                  ? design.groom ||
+                    'Enter the groom’s name under Names and message'
+                  : design.bride ||
+                    'Enter the bride’s name under Names and message'}
+              </span>
+            )}
+            {e[key] && (
+              <img
+                className="portrait-upload-preview"
+                src={`/api/planning/assets?eventId=${eventId}&assetId=${e[key]}`}
+                alt={`Current ${label.toLowerCase()}`}
+                width={72}
+                height={88}
+              />
+            )}
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"

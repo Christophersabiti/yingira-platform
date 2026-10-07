@@ -3090,3 +3090,17 @@ details.panel summary {
     animation: none;
   }
 }
+
+.portrait-owner {
+  display: block;
+  font-weight: 400;
+  font-size: 13px;
+}
+.portrait-upload-preview {
+  display: block;
+  width: 72px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 8px 0;
+}

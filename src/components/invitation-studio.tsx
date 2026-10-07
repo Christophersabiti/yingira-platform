@@ -1,6 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import {
+  guestUrlsCsv,
+  guestUrlsText,
+  type GuestUrlRow,
+} from '@/lib/invitation-links';
 import QRCode from 'qrcode';
 import {
   renderInvitation,
@@ -26,12 +31,14 @@ export function InvitationStudio({
   event,
   initial,
   links,
+  shareLinks,
   selectedGuest,
 }: {
   eventId: string;
   event: Omit<CardDetails, 'guestName' | 'capacity' | 'tableLabel'>;
   initial: PlanningData;
   links: Record<string, string>;
+  shareLinks: Record<string, string>;
   selectedGuest?: string;
 }) {
   const [design, setDesign] = useState<Design>(
@@ -160,6 +167,54 @@ export function InvitationStudio({
     setStatus(
       'Downloaded. Printed cards do not update when the design changes.',
     );
+  }
+  async function selectedUrlRows(ids: string[]): Promise<GuestUrlRow[]> {
+    if (!ids.length) throw Error('Select at least one guest.');
+    const response = await fetch('/api/invitation-links', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventId, guestIds: ids }),
+    });
+    const data = await response.json();
+    if (!response.ok)
+      throw Error(data.message || 'Unable to retrieve guest URLs.');
+    return initial.guests
+      .filter((guest) => ids.includes(guest.id))
+      .map((guest) => ({
+        id: guest.id,
+        name: guest.name,
+        url: data.links[guest.id],
+      }));
+  }
+  async function copyGuestUrl() {
+    const rows = await selectedUrlRows([guestId]);
+    try {
+      await navigator.clipboard.writeText(rows[0].url);
+    } catch {
+      throw Error(
+        'Clipboard access is unavailable. Select and copy the Guest invitation URL field below.',
+      );
+    }
+    setStatus(`Invitation URL copied for ${rows[0].name}.`);
+  }
+  async function exportGuestUrls(copy: boolean) {
+    const rows = await selectedUrlRows(selectedIds);
+    if (copy) {
+      try {
+        await navigator.clipboard.writeText(guestUrlsText(rows));
+      } catch {
+        throw Error(
+          'Clipboard access is unavailable. Download the guest URLs CSV instead.',
+        );
+      }
+      setStatus(`Copied ${rows.length} guest names and invitation URLs.`);
+    } else {
+      saveInvitationBlob(
+        new Blob([guestUrlsCsv(rows)], { type: 'text/csv;charset=utf-8' }),
+        'yingira-guest-urls.csv',
+      );
+      setStatus(`Downloaded ${rows.length} guest invitation URLs.`);
+    }
   }
   async function downloadSelected() {
     const selected = initial.guests.filter((g) => selectedIds.includes(g.id));
@@ -365,8 +420,8 @@ export function InvitationStudio({
               <summary>Names and message</summary>
               {(
                 [
-                  'bride',
                   'groom',
+                  'bride',
                   'hosts',
                   'message',
                   'dressCode',
@@ -378,8 +433,8 @@ export function InvitationStudio({
                 <label key={key}>
                   {
                     {
-                      bride: 'Bride / first host',
-                      groom: 'Groom / second host',
+                      bride: 'Bride / second host',
+                      groom: 'Groom / first host',
                       hosts: 'Families / hosts',
                       message: 'Invitation message',
                       dressCode: 'Dress code',
@@ -690,7 +745,31 @@ export function InvitationStudio({
               >
                 Download 5×7 PDF
               </button>
+              <button
+                type="button"
+                className="button secondary"
+                disabled={
+                  busy ||
+                  !guestId ||
+                  !link ||
+                  !shareLinks[guestId] ||
+                  guest?.revoked
+                }
+                onClick={() => void task(copyGuestUrl)}
+              >
+                Copy URL
+              </button>
             </div>
+            {guestId && shareLinks[guestId] && link && !guest?.revoked && (
+              <label>
+                Guest invitation URL
+                <input
+                  readOnly
+                  value={shareLinks[guestId]}
+                  onFocus={(event) => event.currentTarget.select()}
+                />
+              </label>
+            )}
             <p>
               Preview uses your current draft. Publish before sharing links.
               Keep downloaded guest cards private.
@@ -781,6 +860,30 @@ export function InvitationStudio({
               >
                 Download selected invitations (ZIP)
               </button>
+              <div className="support-actions">
+                <button
+                  type="button"
+                  className="button secondary"
+                  disabled={!selectedIds.length}
+                  onClick={() => void task(() => exportGuestUrls(false))}
+                >
+                  Download selected URLs (CSV)
+                </button>
+                <button
+                  type="button"
+                  className="button secondary"
+                  disabled={!selectedIds.length}
+                  onClick={() => void task(() => exportGuestUrls(true))}
+                >
+                  Copy selected URLs
+                </button>
+              </div>
+              <p>
+                URL exports include each selected guest’s name and private
+                invitation link. Clear the search and choose Select matching
+                guests to export everyone. The 100-card ZIP limit does not apply
+                to URLs (up to 5,000 per export).
+              </p>
             </fieldset>
             {exporting && (
               <button

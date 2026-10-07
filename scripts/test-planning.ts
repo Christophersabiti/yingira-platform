@@ -312,4 +312,67 @@ assert.equal(portraitPublic.data.capacity, 4);
 pass(
   'Multiple portraits and opening settings publish through the unchanged guest token',
 );
+
+const shareRpc = (client: SupabaseClient) =>
+  client.rpc('yingira_guest_share_links', { p_event_id: eventId });
+const shared = await shareRpc(owner.c);
+assert.ifError(shared.error);
+const slug = shared.data[saved.id];
+assert.match(slug, /^test-household-[A-Za-z0-9_-]{16}$/);
+assert.equal((await shareRpc(outsider.c)).error?.code, '42501');
+pass('Readable guest URLs are unique and scoped to the event administrator');
+const byToken = await service.rpc('yingira_resolve_share_link', {
+  p_token: tokens[0].token,
+});
+assert.ifError(byToken.error);
+assert.equal(byToken.data.slug, slug);
+const bySlug = await service.rpc('yingira_resolve_share_link', {
+  p_slug: slug,
+});
+assert.ifError(bySlug.error);
+assert.equal(bySlug.data.ciphertext, tokens[0].tokenCiphertext);
+assert.ok(
+  (await owner.c.rpc('yingira_resolve_share_link', { p_slug: slug })).error,
+);
+pass('Only the trusted server can resolve aliases to the existing QR token');
+state = await call(owner.c, 'state', { eventId });
+const currentGuest = state.guests.find(
+  (g: { id: string }) => g.id === saved.id,
+);
+await call(owner.c, 'save_guest', {
+  eventId,
+  guestId: saved.id,
+  expectedVersion: currentGuest.version,
+  guest: { ...guest, name: 'Renamed Household', capacity: 4 },
+});
+assert.equal((await shareRpc(owner.c)).data[saved.id], slug);
+pass('Editing a guest name preserves previously shared URLs');
+const allSlugs = Object.values((await shareRpc(owner.c)).data);
+assert.equal(new Set(allSlugs).size, allSlugs.length);
+pass('Bulk imports generate distinct guest URL aliases');
+const revoked = await owner.c.rpc('yingira_command', {
+  p_action: 'revoke',
+  p_data: { eventId, invitationId: saved.id },
+});
+assert.ifError(revoked.error);
+assert.equal(
+  (await service.rpc('yingira_resolve_share_link', { p_slug: slug })).data,
+  null,
+);
+assert.equal((await shareRpc(owner.c)).data[saved.id], undefined);
+const reissued = issueToken(key);
+const issued = await owner.c.rpc('yingira_command', {
+  p_action: 'reissue',
+  p_data: { eventId, invitationId: saved.id, ...reissued },
+});
+assert.ifError(issued.error);
+assert.equal(issued.data.ok, true);
+const nextSlug = (await shareRpc(owner.c)).data[saved.id];
+assert.match(nextSlug, /^renamed-household-[A-Za-z0-9_-]{16}$/);
+assert.notEqual(nextSlug, slug);
+assert.equal(
+  (await service.rpc('yingira_resolve_share_link', { p_slug: slug })).data,
+  null,
+);
+pass('Revocation and reissue invalidate old aliases without reactivating them');
 console.log(`${passed} planning integration checks passed`);

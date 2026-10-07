@@ -33,9 +33,16 @@ describe('transactional email adapter', () => {
     const saved: Record<string, unknown>[] = [];
     rpc.mockImplementation(
       async (
-        _name: string,
+        name: string,
         args: { p_action: string; p_data: Record<string, unknown> },
       ) => {
+        if (name === 'yingira_resolve_share_link')
+          return {
+            data: {
+              slug: 'guest-AbCdEf0123456789',
+              ciphertext: generated.tokenCiphertext,
+            },
+          };
         saved.push(args.p_data);
         if (args.p_action === 'claim') {
           if (claimed) return { data: null };
@@ -68,7 +75,12 @@ describe('transactional email adapter', () => {
     expect((options.headers as Record<string, string>)['Idempotency-Key']).toBe(
       'yingira-message-1',
     );
-    expect(JSON.parse(String(options.body)).text).toContain(generated.token);
+    expect(JSON.parse(String(options.body)).text).toContain(
+      'https://example.test/guest-AbCdEf0123456789',
+    );
+    expect(JSON.parse(String(options.body)).text).not.toContain(
+      generated.token,
+    );
     expect(saved.some((d) => d.payload)).toBe(true);
     expect(saved.some((d) => d.status === 'accepted')).toBe(true);
     expect(saved.some((d) => d.status === 'delivered')).toBe(false);

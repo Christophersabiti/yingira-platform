@@ -62,8 +62,8 @@ test('Admin imports XLSX guests, reviews duplicates, publishes a photo design an
   await page
     .getByRole('button', { name: 'Printable card', exact: true })
     .click();
-  await page.getByLabel('Bride / first host').fill('Amina');
-  await page.getByLabel('Groom / second host').fill('Daniel');
+  await page.getByLabel('Bride / second host').fill('Amina');
+  await page.getByLabel('Groom / first host').fill('Daniel');
   const image = await sharp({
     create: { width: 1200, height: 1500, channels: 3, background: '#789080' },
   })
@@ -199,7 +199,7 @@ test('Admin imports XLSX guests, reviews duplicates, publishes a photo design an
   await page.locator('summary.inv-cover').click();
   await page.locator('.inv-names').scrollIntoViewIfNeeded();
   await expect(
-    page.getByRole('heading', { name: /Amina.*Daniel/ }),
+    page.getByRole('heading', { name: /Daniel.*Amina/ }),
   ).toBeVisible();
   await expect(
     page.getByRole('img', {

@@ -54,3 +54,17 @@ Validation details are recorded in the task completion report. Tests cover legac
 - Four browser checks pass: complete customized mobile invitation with three separate portraits; organizer front-page editing/photo upload/publish; token-scoped image reads; calendar and offline QR decoding; 320/390/1280px overflow checks; no-JavaScript keyboard opening; scroll opening/reveals; existing guest import and PNG/PDF/ZIP export workflow.
 - Production build, ESLint, TypeScript and whitespace checks pass. Supabase's local security advisor reports no issues. The migration is applied and recorded on the local database.
 - Deployment is separate: no hosted migration or production publish was performed by this task.
+
+## Readable guest URLs
+
+Each token generation now owns a unique, stable `share_slug`, created in PostgreSQL when a token is issued (including bulk import). Existing tokens are backfilled without changing token hashes, encrypted tokens, guest IDs, or attendance. The address is `/<name-prefix>-<random-suffix>`: a lowercase ASCII name prefix capped at 24 characters, followed by 16 URL-safe random characters (96 random bits). Names that cannot form an ASCII prefix use `guest`. A unique index prevents duplicate addresses. Renaming a guest leaves the URL unchanged; reissue generates a new URL and the old one stays invalid.
+
+The root `[slug]` route resolves aliases through a service-role-only RPC and renders the existing invitation in place. It validates the entire alias, not just the name. A bare `/florence` does not grant access. Closed events, inactive organizations and revoked tokens cannot resolve. Browser roles cannot exchange a slug for token ciphertext or list another event's URLs. Original `/i/<token>` links and all generated entrance QR codes stay valid and use the existing scanner/RSVP/admission workflow.
+
+The studio now provides **Copy URL**, a selectable URL field for clipboard fallback, **Copy selected URLs**, and **Download selected URLs (CSV)**. CSV contains Guest name and Invitation URL, with spreadsheet-formula escaping. The server rechecks selected IDs immediately before copy/export; unavailable/revoked selections fail rather than silently exporting stale URLs. Up to 5,000 selected URLs can be exported without rendering images or applying the 100-image ZIP limit. Clear the search and choose Select matching guests to export all available guest URLs. The event guest list's existing copy/open actions use these addresses too.
+
+New invitation and reminder email payloads include the readable URL. Previously frozen in-flight payloads remain unchanged so provider idempotency and uncertain-send recovery stay safe; their older links remain valid. No email is sent as part of verification.
+
+Apply `20261007195143_guest_share_urls.sql` before deploying this application version. It adds a column/index and constrained RPCs to the existing private token architecture, with no direct browser table grants. It has been applied and recorded locally; hosted migration and deployment are separate.
+
+Verification: 20 planning/database checks cover name stability, unique bulk aliases, admin isolation, service-only resolution and revocation/reissue. Unit tests verify short links in email payloads and escaped CSV formatting. Browser verification exercises clipboard copy, selected-only CSV/text export, anonymous opening at the readable address, and decodes its QR back to the original token.

@@ -4,6 +4,7 @@ import { Shell } from '@/components/shell';
 import { InvitationStudio } from '@/components/invitation-studio';
 import { authenticated, query } from '@/server/data';
 import { appOrigin, encryptionKey } from '@/server/config';
+import { eventShareLinks } from '@/server/invitation-links';
 import { invitationLinks } from '@/lib/tokens';
 import type { EventDetail } from '@/lib/contracts';
 import type { PlanningData } from '@/lib/planning';
@@ -35,6 +36,7 @@ export default async function StudioPage({
         : []),
     ],
   );
+  const shareLinks = await eventShareLinks(db, id);
   data.guests = data.guests.map((g) => ({ ...g, tokenCiphertext: null }));
   return (
     <Shell email={user.email || ''}>
@@ -48,6 +50,7 @@ export default async function StudioPage({
         }}
         initial={data}
         links={links}
+        shareLinks={shareLinks}
         selectedGuest={(await searchParams).guest}
       />
     </Shell>

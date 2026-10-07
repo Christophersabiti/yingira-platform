@@ -1,6 +1,7 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 import { appOrigin, encryptionKey, publicConfig } from './config';
+import { shareUrlForToken } from './invitation-links';
 import { invitationLinks } from '@/lib/tokens';
 export function emailReady() {
   return Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
@@ -51,11 +52,22 @@ export async function processMail(eventId?: string) {
           });
           continue;
         }
+        const shareUrl = await shareUrlForToken(
+          new URL(links[m.id]).pathname.slice(3),
+        );
+        if (!shareUrl) {
+          await worker('complete', {
+            id: m.id,
+            status: 'failed',
+            error: 'Invitation is no longer available; refresh or reissue it.',
+          });
+          continue;
+        }
         payload = {
           from: process.env.EMAIL_FROM,
           to: [m.recipient],
           subject: m.subject,
-          text: `Dear ${m.name},\n\n${m.message}\n\n${m.title}\n${new Date(m.startsAt).toLocaleString('en-GB', { timeZone: m.timezone })}\n${m.venue}\n\nView your private invitation and respond:\n${links[m.id]}\n\nPlease keep your personal invitation link private. Contact your host if you no longer wish to receive event messages.`,
+          text: `Dear ${m.name},\n\n${m.message}\n\n${m.title}\n${new Date(m.startsAt).toLocaleString('en-GB', { timeZone: m.timezone })}\n${m.venue}\n\nView your private invitation and respond:\n${shareUrl}\n\nPlease keep your personal invitation link private. Contact your host if you no longer wish to receive event messages.`,
         };
         await worker('payload', { id: m.id, payload });
       }

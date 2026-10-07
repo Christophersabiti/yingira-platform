@@ -56,7 +56,7 @@ export function InvitationExperienceView({
   const [remaining, setRemaining] = useState<number | null>(null);
   const [downloadStatus, setDownloadStatus] = useState('');
   const [downloading, setDownloading] = useState(false);
-  const names = [design.bride, design.groom].filter(Boolean);
+  const names = [design.groom, design.bride].filter(Boolean);
   const initials = e.seal || names.map((n) => n.trim()[0]).join(' & ') || '♡';
   const start = new Date(details.startsAt);
   const date = (options: Intl.DateTimeFormatOptions) =>
@@ -223,16 +223,16 @@ export function InvitationExperienceView({
         </h2>
         {(e.brideAssetId || e.groomAssetId) && (
           <div className="inv-couple-portraits">
-            {e.brideAssetId && (
-              <figure>
-                {photo(e.brideAssetId, design.bride || 'Bride portrait')}
-                <figcaption>{design.bride}</figcaption>
-              </figure>
-            )}
             {e.groomAssetId && (
               <figure>
                 {photo(e.groomAssetId, design.groom || 'Groom portrait')}
                 <figcaption>{design.groom}</figcaption>
+              </figure>
+            )}
+            {e.brideAssetId && (
+              <figure>
+                {photo(e.brideAssetId, design.bride || 'Bride portrait')}
+                <figcaption>{design.bride}</figcaption>
               </figure>
             )}
           </div>

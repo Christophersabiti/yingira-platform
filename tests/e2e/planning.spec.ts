@@ -59,6 +59,9 @@ test('Admin imports XLSX guests, reviews duplicates, publishes a photo design an
   await expect(
     page.getByRole('heading', { name: 'Make it yours.' }),
   ).toBeVisible();
+  await page
+    .getByRole('button', { name: 'Printable card', exact: true })
+    .click();
   await page.getByLabel('Bride / first host').fill('Amina');
   await page.getByLabel('Groom / second host').fill('Daniel');
   const image = await sharp({
@@ -72,7 +75,10 @@ test('Admin imports XLSX guests, reviews duplicates, publishes a photo design an
     buffer: image,
   });
   await expect(
-    page.getByRole('img', { name: 'Photograph chosen by the hosts' }),
+    page.getByRole('img', {
+      name: 'Photograph chosen by the hosts',
+      exact: true,
+    }),
   ).toBeVisible();
   await expect(page.getByRole('status')).toContainText('Draft saved', {
     timeout: 20000,
@@ -190,14 +196,19 @@ test('Admin imports XLSX guests, reviews duplicates, publishes a photo design an
   expect(mobileMeta.height).toBe(pixels.info.height);
   await page.screenshot({ path: '.local/studio-desktop.png', fullPage: true });
   await page.goto(`/i/${f.token}`);
+  await page.locator('summary.inv-cover').click();
+  await page.locator('.inv-names').scrollIntoViewIfNeeded();
   await expect(
-    page.getByRole('heading', { name: 'Amina & Daniel' }),
+    page.getByRole('heading', { name: /Amina.*Daniel/ }),
   ).toBeVisible();
   await expect(
-    page.getByRole('img', { name: 'Photograph chosen by the hosts' }),
+    page.getByRole('img', {
+      name: 'Photograph chosen by the hosts',
+      exact: true,
+    }),
   ).toBeVisible();
   const imageSrc = await page
-    .getByRole('img', { name: 'Photograph chosen by the hosts' })
+    .getByRole('img', { name: 'Photograph chosen by the hosts', exact: true })
     .getAttribute('src');
   const privateUrl = new URL(imageSrc!, 'http://localhost:3000');
   expect((await request.get(privateUrl.toString())).status()).toBe(200);

@@ -72,7 +72,61 @@ export const templates = [
   },
 ] as const;
 const colour = z.string().regex(/^#[0-9a-fA-F]{6}$/);
+const mapLink = z.union([
+  z.literal(''),
+  z
+    .string()
+    .url()
+    .max(1000)
+    .refine(
+      (value) => new URL(value).protocol === 'https:',
+      'Use an HTTPS map link',
+    ),
+]);
+export const experienceSchema = z.object({
+  layout: z.enum(['scroll', 'card']).default('scroll'),
+  envelope: z.boolean().default(true),
+  envelopeColor: colour.default('#202522'),
+  coverTitle: z
+    .string()
+    .max(160)
+    .default('A little envelope. A beautiful beginning.'),
+  coverSubtitle: z.string().max(160).default('An invitation, just for you'),
+  seal: z.string().max(8).default(''),
+  openingLabel: z.string().max(60).default('Open your invitation'),
+  motion: z.enum(['cinematic', 'gentle', 'none']).default('cinematic'),
+  flowers: z.enum(['ivory', 'botanical', 'minimal', 'none']).default('ivory'),
+  flowerColor: colour.default('#E8D8BD'),
+  foliageColor: colour.default('#7C8B75'),
+  brideAssetId: z.string().uuid().nullable().default(null),
+  groomAssetId: z.string().uuid().nullable().default(null),
+  closingAssetId: z.string().uuid().nullable().default(null),
+  ceremonyVenue: z.string().max(200).default(''),
+  ceremonyTime: z.string().max(60).default(''),
+  ceremonyMap: mapLink.default(''),
+  receptionVenue: z.string().max(200).default(''),
+  receptionTime: z.string().max(60).default(''),
+  receptionMap: mapLink.default(''),
+  kindNote: z.string().max(600).default(''),
+  closingMessage: z
+    .string()
+    .max(600)
+    .default('We cannot wait to celebrate with you.'),
+  showCountdown: z.boolean().default(true),
+  showCalendar: z.boolean().default(true),
+});
+export type InvitationExperience = z.infer<typeof experienceSchema>;
+export const defaultExperience = experienceSchema.parse({});
+export function designAssetIds(design: Design): string[] {
+  return [
+    design.assetId,
+    design.experience.brideAssetId,
+    design.experience.groomAssetId,
+    design.experience.closingAssetId,
+  ].filter((id): id is string => !!id);
+}
 export const designSchema = z.object({
+  experience: experienceSchema.default(defaultExperience),
   template: z.enum([
     'classic',
     'botanical',
@@ -102,6 +156,7 @@ export const designSchema = z.object({
 });
 export type Design = z.infer<typeof designSchema>;
 export const defaultDesign: Design = {
+  experience: defaultExperience,
   template: 'classic',
   mode: 'template',
   bride: '',

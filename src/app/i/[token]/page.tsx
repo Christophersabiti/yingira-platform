@@ -1,6 +1,7 @@
 import { GuestRsvp } from '@/components/household-response';
 import { InvitationCard } from '@/components/invitation-card';
-import { designSchema } from '@/lib/planning';
+import { InvitationExperienceView } from '@/components/invitation-experience';
+import { designSchema, designAssetIds } from '@/lib/planning';
 import Image from 'next/image';
 import QRCode from 'qrcode';
 import { invitation } from '@/server/invitation';
@@ -41,6 +42,25 @@ export default async function InvitationPage({
     />
   ) : null;
   const design = designSchema.safeParse(data.design);
+  if (design.success && design.data.experience.layout === 'scroll')
+    return (
+      <main className="shared-invitation-page">
+        <InvitationExperienceView
+          eventId={data.eventId}
+          design={design.data}
+          details={data}
+          qr={qr}
+          link={`${appOrigin()}/i/${token}`}
+          response={response}
+          photoUrls={Object.fromEntries(
+            designAssetIds(design.data).map((id) => [
+              id,
+              `/api/planning/assets?eventId=${data.eventId}&assetId=${id}&token=${token}`,
+            ]),
+          )}
+        />
+      </main>
+    );
   if (design.success)
     return (
       <main className="guest-page">

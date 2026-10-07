@@ -8,9 +8,12 @@ import {
   invitationFilename,
   type ExportKind,
 } from './invitation-export';
+import { InvitationExperienceView } from './invitation-experience';
+import { ExperienceControls } from './invitation-experience-controls';
 import { InvitationCard, type CardDetails } from './invitation-card';
 import {
   defaultDesign,
+  designAssetIds,
   designSchema,
   templates,
   planningCall,
@@ -33,7 +36,7 @@ export function InvitationStudio({
 }) {
   const [design, setDesign] = useState<Design>(
       designSchema.safeParse(initial.draft).success
-        ? initial.draft!
+        ? designSchema.parse(initial.draft)
         : defaultDesign,
     ),
     [revision, setRevision] = useState(initial.revision),
@@ -47,6 +50,8 @@ export function InvitationStudio({
     [qrResult, setQr] = useState({ link: '', image: '' }),
     [past, setPast] = useState<Design[]>([]),
     [future, setFuture] = useState<Design[]>([]);
+  const [previewMode, setPreviewMode] = useState<'scroll' | 'card'>('scroll');
+  const [previewKey, setPreviewKey] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkSearch, setBulkSearch] = useState('');
   const [bulkKind, setBulkKind] = useState<ExportKind>('png');
@@ -349,6 +354,13 @@ export function InvitationStudio({
                 </button>
               ))}
             </div>
+            <ExperienceControls
+              design={design}
+              onChange={change}
+              eventId={eventId}
+              onTask={task}
+              onStatus={setStatus}
+            />
             <details open>
               <summary>Names and message</summary>
               {(
@@ -783,9 +795,41 @@ export function InvitationStudio({
               </button>
             )}
           </div>
-          <div className="card-preview-scroll">
-            <div className="card-export">
-              <InvitationCard
+          <div className="panel support-actions">
+            <button
+              type="button"
+              className="button secondary"
+              aria-pressed={previewMode === 'scroll'}
+              onClick={() => setPreviewMode('scroll')}
+            >
+              Shared invitation
+            </button>
+            <button
+              type="button"
+              className="button secondary"
+              aria-pressed={previewMode === 'card'}
+              onClick={() => setPreviewMode('card')}
+            >
+              Printable card
+            </button>
+            <button
+              type="button"
+              className="text-button"
+              disabled={
+                previewMode !== 'scroll' ||
+                design.experience.layout !== 'scroll' ||
+                !design.experience.envelope
+              }
+              onClick={() => setPreviewKey((k) => k + 1)}
+            >
+              Replay opening
+            </button>
+          </div>
+          {previewMode === 'scroll' && design.experience.layout === 'scroll' ? (
+            <div className="experience-preview-frame">
+              <InvitationExperienceView
+                eventId={eventId}
+                key={previewKey}
                 design={design}
                 details={{
                   ...event,
@@ -793,12 +837,34 @@ export function InvitationStudio({
                   capacity: guest?.capacity || 2,
                   tableLabel: guest?.tableLabel || '',
                 }}
-                photoUrl={photoUrl}
                 qr={qr}
+                photoUrls={Object.fromEntries(
+                  designAssetIds(design).map((id) => [
+                    id,
+                    `/api/planning/assets?eventId=${eventId}&assetId=${id}`,
+                  ]),
+                )}
                 preview
               />
             </div>
-          </div>
+          ) : (
+            <div className="card-preview-scroll">
+              <div className="card-export">
+                <InvitationCard
+                  design={design}
+                  details={{
+                    ...event,
+                    guestName: guest?.name || 'Your guest',
+                    capacity: guest?.capacity || 2,
+                    tableLabel: guest?.tableLabel || '',
+                  }}
+                  photoUrl={photoUrl}
+                  qr={qr}
+                  preview
+                />
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </>

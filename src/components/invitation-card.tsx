@@ -76,7 +76,21 @@ export function InvitationCard({
             timeZone: details.timezone,
           })}
         </p>
-        <strong>{details.venue}</strong>
+        <strong>{design.experience.receptionVenue || details.venue}</strong>
+        {design.experience.receptionTime && (
+          <p>Reception: {design.experience.receptionTime}</p>
+        )}
+        {design.experience.ceremonyVenue && (
+          <p className="design-extra">
+            Ceremony: {design.experience.ceremonyVenue}
+            {design.experience.ceremonyTime
+              ? ` · ${design.experience.ceremonyTime}`
+              : ''}
+          </p>
+        )}
+        {design.experience.kindNote && (
+          <p className="design-extra">{design.experience.kindNote}</p>
+        )}
         {design.dressCode && <p>Dress code: {design.dressCode}</p>}
         <p>
           An invitation for {details.capacity}{' '}

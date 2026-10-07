@@ -87,3 +87,48 @@ describe('invitation design', () => {
     expect(contrast('#ffffff', '#ffffff')).toBe(1);
   });
 });
+
+describe('shared invitation experience', () => {
+  it('upgrades legacy designs without changing their original fields', () => {
+    const legacy = { ...defaultDesign } as Partial<typeof defaultDesign>;
+    delete legacy.experience;
+    const parsed = designSchema.parse({ ...legacy, bride: 'Alice' });
+    expect(parsed.bride).toBe('Alice');
+    expect(parsed.experience.layout).toBe('scroll');
+    expect(parsed.experience.brideAssetId).toBeNull();
+    expect(parsed.experience.envelope).toBe(true);
+  });
+  it('round-trips customization and fills missing experience fields', () => {
+    const design = designSchema.parse({
+      ...defaultDesign,
+      experience: {
+        coverTitle: 'Our wedding',
+        flowers: 'botanical',
+        motion: 'none',
+      },
+    });
+    expect(design.experience.coverTitle).toBe('Our wedding');
+    expect(design.experience.flowers).toBe('botanical');
+    expect(design.experience.motion).toBe('none');
+    expect(design.experience.showCalendar).toBe(true);
+    expect(designSchema.parse(JSON.parse(JSON.stringify(design)))).toEqual(
+      design,
+    );
+  });
+  it('rejects script links, invalid portrait references and injected colors', () => {
+    for (const override of [
+      { ceremonyMap: 'javascript:alert(1)' },
+      { receptionMap: 'http://example.com' },
+      { brideAssetId: 'https://example.com/private.jpg' },
+      { envelopeColor: 'url(evil)' },
+      { motion: 'arbitrary' },
+    ]) {
+      expect(
+        designSchema.safeParse({
+          ...defaultDesign,
+          experience: { ...defaultDesign.experience, ...override },
+        }).success,
+      ).toBe(false);
+    }
+  });
+});

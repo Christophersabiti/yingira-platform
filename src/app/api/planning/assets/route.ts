@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { publicConfig } from '@/server/config';
 import { boundedBody, planningDb, requireOrigin } from '@/server/planning';
 import { invitation } from '@/server/invitation';
-import { designSchema } from '@/lib/planning';
+import { designSchema, designAssetIds } from '@/lib/planning';
 function storage() {
   return createClient(publicConfig().url, process.env.SUPABASE_SECRET_KEY!, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -72,7 +72,7 @@ export async function GET(request: Request) {
         !data ||
         data.eventId !== eventId ||
         !design.success ||
-        design.data.assetId !== assetId
+        !designAssetIds(design.data).includes(assetId)
       )
         throw Error('Unavailable');
     } else {

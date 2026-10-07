@@ -228,4 +228,88 @@ const bulk = state.jobs.find((j: { id: string }) => j.id === bulkJob);
 assert.equal(bulk.created, 1000);
 assert.equal(bulk.processed, 1000);
 pass('A 1,000-row import completes through bounded durable batches');
+// The new portrait slots have the same event ownership rules as the cover.
+for (const slot of ['brideAssetId', 'groomAssetId', 'closingAssetId']) {
+  const current = await call(owner.c, 'state', { eventId });
+  assert.ok(
+    (
+      await raw(owner.c, 'save_design', {
+        eventId,
+        expectedRevision: current.revision,
+        design: {
+          ...defaultDesign,
+          experience: { ...defaultDesign.experience, [slot]: randomUUID() },
+        },
+      })
+    ).error,
+  );
+}
+pass('All portrait slots reject unregistered assets');
+const foreignEvent = await owner.c.rpc('yingira_command', {
+  p_action: 'create_event',
+  p_data: {
+    organizationId: org.data.data.id,
+    title: 'Other event',
+    venue: 'Other Hall',
+    startsAt: '2027-02-01T12:00:00Z',
+    timezone: 'Africa/Kampala',
+  },
+});
+assert.ifError(foreignEvent.error);
+const foreignAsset = randomUUID();
+await call(owner.c, 'register_asset', {
+  eventId: foreignEvent.data.data.id,
+  assetId: foreignAsset,
+});
+state = await call(owner.c, 'state', { eventId });
+assert.ok(
+  (
+    await raw(owner.c, 'save_design', {
+      eventId,
+      expectedRevision: state.revision,
+      design: {
+        ...defaultDesign,
+        experience: {
+          ...defaultDesign.experience,
+          closingAssetId: foreignAsset,
+        },
+      },
+    })
+  ).error,
+);
+pass('A registered portrait from another event cannot be attached');
+const portraits = [randomUUID(), randomUUID(), randomUUID()];
+for (const assetId of portraits)
+  await call(owner.c, 'register_asset', { eventId, assetId });
+const customized = {
+  ...defaultDesign,
+  bride: 'Alice',
+  groom: 'Bob',
+  experience: {
+    ...defaultDesign.experience,
+    coverTitle: 'A day for love',
+    flowers: 'botanical',
+    brideAssetId: portraits[0],
+    groomAssetId: portraits[1],
+    closingAssetId: portraits[2],
+  },
+};
+const portraitSave = await call(owner.c, 'save_design', {
+  eventId,
+  expectedRevision: state.revision,
+  design: customized,
+});
+await call(owner.c, 'publish_design', {
+  eventId,
+  expectedRevision: portraitSave.revision,
+});
+const portraitPublic = await service.rpc('yingira_public_invitation', {
+  p_token: tokens[0].token,
+});
+assert.ifError(portraitPublic.error);
+assert.deepEqual(portraitPublic.data.design, customized);
+assert.equal(portraitPublic.data.capacity, 4);
+pass(
+  'Multiple portraits and opening settings publish through the unchanged guest token',
+);
 console.log(`${passed} planning integration checks passed`);

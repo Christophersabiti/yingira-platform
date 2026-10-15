@@ -19,3 +19,12 @@ export function encryptionKey() {
 export function appOrigin() {
   return new URL(process.env.APP_ORIGIN ?? 'http://localhost:3000').origin;
 }
+export function isAllowedOrigin(request: Request) {
+  // Fetch Metadata is browser-controlled: page scripts cannot forge Sec-* headers.
+  // This supports same-origin requests on deployment aliases without trusting Host
+  // or forwarded headers. Older clients must still match the configured origin.
+  return (
+    request.headers.get('sec-fetch-site') === 'same-origin' ||
+    request.headers.get('origin') === appOrigin()
+  );
+}

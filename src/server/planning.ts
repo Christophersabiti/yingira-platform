@@ -1,6 +1,6 @@
 import 'server-only';
 import { supabase } from './supabase';
-import { appOrigin } from './config';
+import { isAllowedOrigin } from './config';
 export async function planningDb(eventId: string) {
   const db = await supabase();
   const { data, error } = await db.auth.getUser();
@@ -14,8 +14,7 @@ export async function planningDb(eventId: string) {
   return db;
 }
 export function requireOrigin(request: Request) {
-  if (request.headers.get('origin') !== appOrigin())
-    throw Error('Request not allowed.');
+  if (!isAllowedOrigin(request)) throw Error('Request not allowed.');
 }
 export async function boundedBody(request: Request, limit: number) {
   if (Number(request.headers.get('content-length') || 0) > limit)

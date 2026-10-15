@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { commandSchema } from '@/lib/contracts';
 import { issueToken } from '@/lib/tokens';
-import { appOrigin, encryptionKey } from '@/server/config';
+import { isAllowedOrigin, encryptionKey } from '@/server/config';
 import { supabase } from '@/server/supabase';
 export async function POST(request: NextRequest) {
-  if (request.headers.get('origin') !== appOrigin())
+  if (!isAllowedOrigin(request))
     return NextResponse.json(
       { ok: false, code: 'FORBIDDEN', message: 'This request is not allowed.' },
       { status: 403 },

@@ -3289,3 +3289,46 @@ details.panel summary {
   margin-top: auto;
   padding-top: 5px;
 }
+
+/* Longer invitations reflow before export; QR dimensions stay unchanged. */
+.print-wedding-card[data-density='compact'] .print-card-content,
+.print-wedding-card[data-density='condensed'] .print-card-content {
+  padding: 26px 32px;
+}
+.print-wedding-card[data-density='compact'] h1,
+.print-wedding-card[data-density='condensed'] h1 {
+  font-size: 30px;
+  margin: 6px 0;
+}
+.print-wedding-card[data-density='compact'] p,
+.print-wedding-card[data-density='condensed'] p {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+.print-wedding-card[data-density='compact'] .print-venues,
+.print-wedding-card[data-density='condensed'] .print-venues,
+.print-wedding-card[data-density='compact'] .print-admission,
+.print-wedding-card[data-density='condensed'] .print-admission {
+  margin-top: 6px;
+  padding-top: 6px;
+}
+.print-wedding-card[data-density='condensed'] h1 span,
+.print-wedding-card[data-density='condensed'] h1 em {
+  display: inline;
+}
+.print-wedding-card[data-density='condensed'] h1 em {
+  margin: 0 8px;
+}
+.print-wedding-card[data-density='condensed'] .print-message {
+  line-height: 1.25;
+  white-space: normal;
+}
+.print-wedding-card[data-density='condensed'] .print-notes {
+  columns: 2;
+  column-gap: 16px;
+  text-align: left;
+}
+.print-wedding-card[data-density='condensed'] .print-notes p {
+  break-inside: avoid;
+  white-space: normal;
+}

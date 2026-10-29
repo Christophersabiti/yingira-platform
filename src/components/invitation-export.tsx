@@ -2,6 +2,7 @@
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import QRCode from 'qrcode';
+import { fitPrintCard } from '@/lib/print-card-fit';
 import { InvitationCard, type CardDetails } from './invitation-card';
 import type { Design } from '@/lib/planning';
 
@@ -52,10 +53,9 @@ export async function renderInvitation({
     );
     const width = 500;
     const height = (width * 182.1) / 140;
-    const content = card.querySelector('.print-card-content')!;
-    if (content.scrollHeight > content.clientHeight + 1)
+    if (!fitPrintCard(card))
       throw Error(
-        'The details exceed the 14 × 18.21 cm card. Shorten the message, names or additional notes before downloading.',
+        'Even the compact layout cannot fit all these details on one 14 × 18.21 cm card. Reduce the additional notes or programme and try again.',
       );
     const { toBlob } = await import('html-to-image');
     const png = await toBlob(card, {

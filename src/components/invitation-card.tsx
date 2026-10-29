@@ -1,5 +1,8 @@
+'use client';
 /* eslint-disable @next/next/no-img-element */
 import QRCode from 'qrcode';
+import { useLayoutEffect, useRef } from 'react';
+import { fitPrintCard } from '@/lib/print-card-fit';
 import type { Design } from '@/lib/planning';
 import { InvitationFlowers } from './invitation-flowers';
 export type CardDetails = {
@@ -77,10 +80,22 @@ export function InvitationCard({
   qr?: string;
   preview?: boolean;
 }) {
+  const cardRef = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    let active = true;
+    const fit = () => {
+      if (active && cardRef.current) fitPrintCard(cardRef.current);
+    };
+    fit();
+    void document.fonts.ready.then(fit);
+    return () => {
+      active = false;
+    };
+  });
   const names = [design.groom, design.bride].filter(Boolean);
   const e = design.experience;
   return (
-    <article className="designed-card print-wedding-card">
+    <article ref={cardRef} className="designed-card print-wedding-card">
       <InvitationFlowers style="botanical" className="print-flowers-top" />
       <InvitationFlowers style="botanical" className="print-flowers-bottom" />
       <div className="print-card-content">

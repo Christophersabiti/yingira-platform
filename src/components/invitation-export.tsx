@@ -51,13 +51,18 @@ export async function renderInvitation({
       Array.from(card.querySelectorAll('img')).map((image) => image.decode()),
     );
     const width = 500;
-    const height = Math.ceil(card.getBoundingClientRect().height);
+    const height = (width * 182.1) / 140;
+    const content = card.querySelector('.print-card-content')!;
+    if (content.scrollHeight > content.clientHeight + 1)
+      throw Error(
+        'The details exceed the 14 × 18.21 cm card. Shorten the message, names or additional notes before downloading.',
+      );
     const { toBlob } = await import('html-to-image');
     const png = await toBlob(card, {
       width,
       height,
-      pixelRatio: 2,
-      backgroundColor: design.background,
+      pixelRatio: 3.31,
+      backgroundColor: '#f7faf4',
       style: {
         margin: '0',
         width: `${width}px`,
@@ -69,20 +74,14 @@ export async function renderInvitation({
       throw Error('The invitation could not be rendered. Please try again.');
     if (kind === 'png') return png;
     const { jsPDF } = await import('jspdf');
-    const pdf = new jsPDF({ unit: 'mm', format: [127, 177.8] });
-    const ratio = height / width;
-    const printWidth = Math.min(117, 167.8 / ratio);
-    if (link && (printWidth * 144) / width < 20)
-      throw Error(
-        'This card is too long for a scannable 5×7 print. Shorten the message or programme, or download PNG instead.',
-      );
+    const pdf = new jsPDF({ unit: 'mm', format: [140, 182.1] });
     pdf.addImage(
       new Uint8Array(await png.arrayBuffer()),
       'PNG',
-      (127 - printWidth) / 2,
-      (177.8 - printWidth * ratio) / 2,
-      printWidth,
-      printWidth * ratio,
+      0,
+      0,
+      140,
+      182.1,
     );
     return pdf.output('blob');
   } finally {

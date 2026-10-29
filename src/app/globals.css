@@ -3104,3 +3104,188 @@ details.panel summary {
   border-radius: 8px;
   margin: 8px 0;
 }
+
+/* Fixed print stationery: 140 × 182.1 mm, shared by preview and export. */
+.designed-card.print-wedding-card {
+  width: 500px;
+  max-width: none;
+  height: 650.357143px;
+  box-sizing: border-box;
+  background: #f7faf4;
+  color: #000;
+  border: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  --inv-foliage: #819c72;
+  --inv-flower: #f5ded4;
+  --inv-accent: #b99b65;
+}
+.print-wedding-card::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 1px solid #c3a264;
+  pointer-events: none;
+}
+.print-wedding-card .inv-flowers {
+  position: absolute;
+  width: 225px;
+  height: 100px;
+  z-index: 1;
+  pointer-events: none;
+}
+.print-wedding-card .print-flowers-top {
+  top: -15px;
+  right: -35px;
+  transform: rotate(180deg);
+}
+.print-wedding-card .print-flowers-bottom {
+  bottom: -8px;
+  left: -35px;
+}
+.print-wedding-card .inv-flowers svg {
+  width: 100%;
+  height: 100%;
+}
+.print-card-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 33px 48px 30px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.print-wedding-card p {
+  margin: 5px 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000;
+}
+.print-wedding-card .print-hosts {
+  font-size: 9px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+.print-wedding-card h1,
+.invitation-export-stage .print-wedding-card h1 {
+  font-family: 'Snell Roundhand', 'Apple Chancery', 'URW Chancery L', cursive;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  margin: 11px 0;
+  color: #000;
+}
+.print-wedding-card h1 span {
+  display: block;
+}
+.print-wedding-card h1 em {
+  display: block;
+  font-size: 20px;
+  line-height: 1.1;
+}
+.print-wedding-card .print-message {
+  font-style: italic;
+  font-size: 11px;
+}
+.print-wedding-card .print-recipient {
+  font-size: 15px;
+  margin-top: 10px;
+}
+.print-wedding-card .print-date {
+  font-size: 12px;
+  margin: 8px 0;
+}
+.print-venues {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  border-top: 1px solid #c3a264;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+.print-venues section {
+  flex: 1;
+  min-width: 0;
+}
+.print-wedding-card h2 {
+  font:
+    10px/1.4 Arial,
+    sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 5px;
+  color: #000;
+}
+.print-venues strong {
+  display: block;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.print-venues p {
+  font-size: 10px;
+}
+.print-map-qr {
+  display: grid;
+  justify-items: center;
+  margin: 5px auto 0;
+  color: #000;
+  text-decoration: none;
+}
+.print-map-qr svg {
+  width: 82px;
+  height: 82px;
+}
+.print-map-qr span {
+  font:
+    8px/1.4 Arial,
+    sans-serif;
+  color: #000;
+}
+.print-admission {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 10px auto 0;
+  padding-top: 8px;
+  border-top: 1px solid #c3a264;
+}
+.print-admission img {
+  width: 116px;
+  height: 116px;
+  flex-shrink: 0;
+}
+.print-admission > div {
+  text-align: left;
+}
+.print-admission p,
+.print-admission strong {
+  font-size: 10px;
+}
+.print-qr-sample {
+  width: 116px;
+  height: 116px;
+  display: grid;
+  place-content: center;
+  border: 1px dashed #000;
+  padding: 10px;
+  font:
+    10px/1.5 Arial,
+    sans-serif;
+}
+.print-wedding-card .print-notes p {
+  font-size: 9px;
+  margin: 3px 0;
+}
+.print-notes {
+  margin-top: 7px;
+}
+.print-venues section {
+  display: flex;
+  flex-direction: column;
+}
+.print-venues .print-map-qr {
+  margin-top: auto;
+  padding-top: 5px;
+}

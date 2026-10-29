@@ -743,7 +743,7 @@ export function InvitationStudio({
                 disabled={busy || (!!guestId && !qr)}
                 onClick={() => void task(() => download('pdf'))}
               >
-                Download 5×7 PDF
+                Download 14 × 18.21 cm PDF
               </button>
               <button
                 type="button"
@@ -843,7 +843,7 @@ export function InvitationStudio({
                   onChange={(e) => setBulkKind(e.target.value as ExportKind)}
                 >
                   <option value="png">PNG images</option>
-                  <option value="pdf">5×7 PDF files</option>
+                  <option value="pdf">14 × 18.21 cm PDF files</option>
                 </select>
               </label>
               <p>

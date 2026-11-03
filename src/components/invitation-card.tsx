@@ -96,8 +96,6 @@ export function InvitationCard({
   const e = design.experience;
   return (
     <article ref={cardRef} className="designed-card print-wedding-card">
-      <InvitationFlowers style="botanical" className="print-flowers-top" />
-      <InvitationFlowers style="botanical" className="print-flowers-bottom" />
       <div className="print-card-content">
         <p className="print-hosts">
           {design.hosts || 'Together with our families'}
@@ -156,7 +154,7 @@ export function InvitationCard({
             </div>
           )}
           <div>
-            <h2>For the usher</h2>
+            <h2>Guest entrance pass</h2>
             <p>Present this QR at the entrance.</p>
             <p>
               Admits {details.capacity}{' '}

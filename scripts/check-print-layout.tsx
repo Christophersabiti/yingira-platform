@@ -74,9 +74,9 @@ try {
         .getBoundingClientRect().width,
       map: el.querySelector('.print-map-qr svg')!.getBoundingClientRect().width,
     }));
-    assert.equal(result.entrance, 116);
-    assert.equal(result.map, 82);
-    assert.ok(Math.abs(result.height - 650.357143) < 0.1);
+    assert.equal(result.entrance, 88);
+    assert.equal(result.map, 64);
+    assert.equal(result.height, 720);
     if (label === 'long') {
       assert.ok(
         initialBottom > 650,

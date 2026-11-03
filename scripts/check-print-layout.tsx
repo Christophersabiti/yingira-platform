@@ -76,7 +76,7 @@ try {
     }));
     assert.equal(result.entrance, 88);
     assert.equal(result.map, 64);
-    assert.equal(result.height, 720);
+    assert.ok(Math.abs(result.height - 650.357143) < 0.1);
     if (label === 'long') {
       assert.ok(
         initialBottom > 650,

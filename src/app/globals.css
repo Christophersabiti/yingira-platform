@@ -3107,14 +3107,16 @@ details.panel summary {
 
 /* Fixed print stationery: 140 × 182.1 mm, shared by preview and export. */
 .designed-card.print-wedding-card {
-  width: 500px;
-  max-width: none;
-  height: 720px;
+  width: min(500px, 100%);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 140 / 182.1;
   box-sizing: border-box;
   background: #fff;
   color: #000;
   border: 0;
   font-family: Georgia, 'Times New Roman', serif;
+  container-type: inline-size;
   --inv-foliage: #000;
   --inv-flower: #fff;
   --inv-accent: #000;
@@ -3122,16 +3124,16 @@ details.panel summary {
 .print-wedding-card::after {
   content: '';
   position: absolute;
-  inset: 18px 18px 48px;
-  border: 2px solid #000;
-  border-radius: 24px;
+  inset: 3.6cqw 3.6cqw 9.6cqw;
+  border: 0.4cqw solid #000;
+  border-radius: 4.8cqw;
   pointer-events: none;
 }
 .print-card-content {
   position: relative;
   z-index: 2;
   height: 100%;
-  padding: 34px 42px 30px;
+  padding: 6.8cqw 8.4cqw 6cqw;
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
@@ -3139,22 +3141,22 @@ details.panel summary {
   justify-content: center;
 }
 .print-wedding-card p {
-  margin: 5px 0;
-  font-size: 12px;
+  margin: 1cqw 0;
+  font-size: 2.4cqw;
   line-height: 1.4;
   color: #000;
 }
 .print-wedding-card .print-hosts {
-  max-width: 410px;
-  margin: 0 auto 13px;
-  font-size: 8px;
+  max-width: 82cqw;
+  margin: 0 auto 2.6cqw;
+  font-size: 1.6cqw;
   line-height: 1.5;
-  letter-spacing: 1px;
+  letter-spacing: 0.2cqw;
   text-transform: uppercase;
 }
 .print-wedding-card .print-ceremony-intro {
-  margin: 0 0 2px;
-  font-size: 11px;
+  margin: 0 0 0.4cqw;
+  font-size: 2.2cqw;
   font-weight: 700;
   line-height: 1.35;
 }
@@ -3163,10 +3165,10 @@ details.panel summary {
   font-family: 'Snell Roundhand', 'Apple Chancery', 'URW Chancery L', cursive;
   font-style: italic;
   font-weight: 700;
-  font-size: 36px;
+  font-size: 7.2cqw;
   line-height: 1.18;
   letter-spacing: 0;
-  margin: 11px 0;
+  margin: 2.2cqw 0;
   color: #000;
 }
 .print-wedding-card h1 span {
@@ -3174,75 +3176,75 @@ details.panel summary {
 }
 .print-wedding-card h1 span + span::before {
   content: ' & ';
-  font: italic 700 20px/1 Georgia, 'Times New Roman', serif;
+  font: italic 700 4cqw/1 Georgia, 'Times New Roman', serif;
 }
 .print-wedding-card h1 em {
   display: none;
 }
 .print-wedding-card .print-message {
   font-style: italic;
-  font-size: 11px;
-  margin-bottom: 3px;
+  font-size: 2.2cqw;
+  margin-bottom: 0.6cqw;
 }
 .print-wedding-card .print-recipient {
-  font-size: 13px;
+  font-size: 2.6cqw;
   font-weight: 700;
-  margin-top: 5px;
+  margin-top: 1cqw;
 }
 .print-wedding-card .print-date {
-  font-size: 12px;
-  margin: 3px 0 15px;
+  font-size: 2.4cqw;
+  margin: 0.6cqw 0 3cqw;
 }
 .print-venues {
   display: flex;
   justify-content: center;
-  gap: 18px;
+  gap: 3.6cqw;
   border: 0;
   padding: 0;
-  margin: 0 0 14px;
+  margin: 0 0 2.8cqw;
 }
 .print-venues section {
   flex: 1;
   min-width: 0;
   border-top: 1px solid #000;
-  padding: 9px 4px 0;
+  padding: 1.8cqw 0.8cqw 0;
 }
 .print-wedding-card h2 {
   font:
-    9px/1.4 Arial,
+    1.8cqw/1.4 Arial,
     sans-serif;
-  letter-spacing: 1.5px;
+  letter-spacing: 0.3cqw;
   text-transform: uppercase;
-  margin: 0 0 5px;
+  margin: 0 0 1cqw;
   color: #000;
 }
 .print-venues strong {
   display: block;
-  font-size: 12px;
+  font-size: 2.4cqw;
   line-height: 1.35;
 }
 .print-venues p {
-  font-size: 10px;
+  font-size: 2cqw;
 }
 .print-map-qr {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin: 7px auto 0;
+  gap: 1.6cqw;
+  margin: 1.4cqw auto 0;
   color: #000;
   text-decoration: none;
 }
 .print-map-qr svg {
-  width: 64px;
-  height: 64px;
-  flex: 0 0 64px;
+  width: 12.8cqw;
+  height: 12.8cqw;
+  flex: 0 0 12.8cqw;
 }
 .print-map-qr span {
   font:
-    8px/1.4 Arial,
+    1.6cqw/1.4 Arial,
     sans-serif;
-  max-width: 60px;
+  max-width: 12cqw;
   text-align: left;
   color: #000;
 }
@@ -3250,15 +3252,15 @@ details.panel summary {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 3.2cqw;
   margin: 0 auto;
-  padding: 13px 0 0;
+  padding: 2.6cqw 0 0;
   border-top: 1px solid #000;
-  max-width: 390px;
+  max-width: 78cqw;
 }
 .print-admission img {
-  width: 88px;
-  height: 88px;
+  width: 17.6cqw;
+  height: 17.6cqw;
   flex-shrink: 0;
   background: #fff;
 }
@@ -3267,27 +3269,27 @@ details.panel summary {
 }
 .print-admission p,
 .print-admission strong {
-  font-size: 9px;
+  font-size: 1.8cqw;
   line-height: 1.4;
 }
 .print-qr-sample {
-  width: 88px;
-  height: 88px;
+  width: 17.6cqw;
+  height: 17.6cqw;
   box-sizing: border-box;
   display: grid;
   place-content: center;
   border: 1px solid #000;
-  padding: 10px;
+  padding: 2cqw;
   font:
-    10px/1.5 Arial,
+    2cqw/1.5 Arial,
     sans-serif;
 }
 .print-wedding-card .print-notes p {
-  font-size: 9px;
-  margin: 3px 0;
+  font-size: 1.8cqw;
+  margin: 0.6cqw 0;
 }
 .print-notes {
-  margin-top: 7px;
+  margin-top: 1.4cqw;
 }
 .print-venues section {
   display: flex;
@@ -3295,30 +3297,30 @@ details.panel summary {
 }
 .print-venues .print-map-qr {
   margin-top: auto;
-  padding-top: 5px;
+  padding-top: 1cqw;
 }
 
 /* Longer invitations reflow before export; QR dimensions stay unchanged. */
 .print-wedding-card[data-density='compact'] .print-card-content,
 .print-wedding-card[data-density='condensed'] .print-card-content {
-  padding: 26px 34px;
+  padding: 5.2cqw 6.8cqw;
 }
 .print-wedding-card[data-density='compact'] h1,
 .print-wedding-card[data-density='condensed'] h1 {
-  font-size: 32px;
-  margin: 6px 0;
+  font-size: 6.4cqw;
+  margin: 1.2cqw 0;
 }
 .print-wedding-card[data-density='compact'] p,
 .print-wedding-card[data-density='condensed'] p {
-  margin-top: 3px;
-  margin-bottom: 3px;
+  margin-top: 0.6cqw;
+  margin-bottom: 0.6cqw;
 }
 .print-wedding-card[data-density='compact'] .print-venues,
 .print-wedding-card[data-density='condensed'] .print-venues,
 .print-wedding-card[data-density='compact'] .print-admission,
 .print-wedding-card[data-density='condensed'] .print-admission {
-  margin-top: 6px;
-  padding-top: 6px;
+  margin-top: 1.2cqw;
+  padding-top: 1.2cqw;
 }
 .print-wedding-card[data-density='condensed'] .print-message {
   line-height: 1.25;

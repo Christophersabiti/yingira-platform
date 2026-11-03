@@ -1,4 +1,4 @@
-/** Fit stationery by reflowing text and spacing, never scaling its QR codes. */
+/** Fit stationery by reflowing text and spacing; responsive CSS scales QRs proportionally. */
 export function fitPrintCard(card: HTMLElement): boolean {
   const content = card.querySelector<HTMLElement>('.print-card-content');
   if (!content) return false;

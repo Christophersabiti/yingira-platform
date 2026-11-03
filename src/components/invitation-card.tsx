@@ -100,6 +100,7 @@ export function InvitationCard({
         <p className="print-hosts">
           {design.hosts || 'Together with our families'}
         </p>
+        <p className="print-ceremony-intro">To the Wedding ceremony of:</p>
         <h1>
           {names.length
             ? names.map((name, i) => (
@@ -115,7 +116,6 @@ export function InvitationCard({
         <p className="print-date">
           {new Date(details.startsAt).toLocaleString('en-GB', {
             dateStyle: 'long',
-            timeStyle: 'short',
             timeZone: details.timezone,
           })}
         </p>

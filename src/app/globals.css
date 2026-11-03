@@ -3147,13 +3147,19 @@ details.panel summary {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
+.print-wedding-card .print-ceremony-intro {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+}
 .print-wedding-card h1,
 .invitation-export-stage .print-wedding-card h1 {
   font-family: 'Snell Roundhand', 'Apple Chancery', 'URW Chancery L', cursive;
   font-style: italic;
-  font-weight: 400;
-  font-size: 34px;
-  line-height: 1.12;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1.18;
   letter-spacing: 0;
   margin: 11px 0;
   color: #000;
@@ -3163,7 +3169,7 @@ details.panel summary {
 }
 .print-wedding-card h1 span + span::before {
   content: ' & ';
-  font: italic 18px/1 Georgia, 'Times New Roman', serif;
+  font: italic 700 20px/1 Georgia, 'Times New Roman', serif;
 }
 .print-wedding-card h1 em {
   display: none;
@@ -3294,7 +3300,7 @@ details.panel summary {
 }
 .print-wedding-card[data-density='compact'] h1,
 .print-wedding-card[data-density='condensed'] h1 {
-  font-size: 30px;
+  font-size: 32px;
   margin: 6px 0;
 }
 .print-wedding-card[data-density='compact'] p,

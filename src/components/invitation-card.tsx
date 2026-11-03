@@ -96,12 +96,11 @@ export function InvitationCard({
   const e = design.experience;
   return (
     <article ref={cardRef} className="designed-card print-wedding-card">
-      <InvitationFlowers style="minimal" className="print-flowers-top" />
-      <InvitationFlowers style="minimal" className="print-flowers-bottom" />
       <div className="print-card-content">
         <p className="print-hosts">
           {design.hosts || 'Together with our families'}
         </p>
+        <p className="print-recipient">Invites {details.guestName}</p>
         <p className="print-ceremony-intro">To the Wedding ceremony of:</p>
         <h1>
           {names.length
@@ -114,7 +113,6 @@ export function InvitationCard({
             : details.title}
         </h1>
         <p className="print-message">{design.message}</p>
-        <p className="print-recipient">Invites {details.guestName}</p>
         <p className="print-date">
           {new Date(details.startsAt).toLocaleString('en-GB', {
             dateStyle: 'long',

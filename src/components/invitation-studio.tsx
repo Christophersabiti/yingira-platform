@@ -424,6 +424,8 @@ export function InvitationStudio({
                   'bride',
                   'hosts',
                   'message',
+                  'verse',
+                  'guestNotice',
                   'dressCode',
                   'directions',
                   'contact',
@@ -437,6 +439,8 @@ export function InvitationStudio({
                       groom: 'Groom / first host',
                       hosts: 'Families / hosts',
                       message: 'Invitation message',
+                      verse: 'Bible / Quran verse (printed without a heading)',
+                      guestNotice: 'Guest notice (optional)',
                       dressCode: 'Dress code',
                       directions: 'Directions',
                       contact: 'Host contact',
@@ -444,17 +448,27 @@ export function InvitationStudio({
                     }[key]
                   }
                   <textarea
-                    rows={key === 'message' || key === 'programme' ? 3 : 1}
+                    rows={
+                      ['message', 'programme', 'verse', 'guestNotice'].includes(
+                        key,
+                      )
+                        ? 3
+                        : 1
+                    }
                     maxLength={
                       key === 'message' || key === 'programme'
                         ? 500
-                        : key === 'directions'
-                          ? 300
-                          : key === 'hosts'
-                            ? 200
-                            : key === 'contact'
-                              ? 160
-                              : 100
+                        : key === 'verse'
+                          ? 500
+                          : key === 'guestNotice'
+                            ? 300
+                            : key === 'directions'
+                              ? 300
+                              : key === 'hosts'
+                                ? 200
+                                : key === 'contact'
+                                  ? 160
+                                  : 100
                     }
                     value={design[key]}
                     onChange={(e) =>

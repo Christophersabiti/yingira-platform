@@ -3162,13 +3162,15 @@ details.panel summary {
 }
 .print-wedding-card h1,
 .invitation-export-stage .print-wedding-card h1 {
-  font-family: 'Snell Roundhand', 'Apple Chancery', 'URW Chancery L', cursive;
-  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: normal;
   font-weight: 700;
-  font-size: 7.2cqw;
-  line-height: 1.18;
-  letter-spacing: 0;
-  margin: 2.2cqw 0;
+  font-size: 5.3cqw;
+  line-height: 1.2;
+  letter-spacing: 0.02cqw;
+  text-align: center;
+  overflow-wrap: anywhere;
+  margin: 2cqw 0;
   color: #000;
 }
 .print-wedding-card h1 span {
@@ -3176,7 +3178,10 @@ details.panel summary {
 }
 .print-wedding-card h1 span + span::before {
   content: ' & ';
-  font: italic 700 4cqw/1 Georgia, 'Times New Roman', serif;
+  font:
+    italic 700 4cqw/1 Georgia,
+    'Times New Roman',
+    serif;
 }
 .print-wedding-card h1 em {
   display: none;
@@ -3227,26 +3232,7 @@ details.panel summary {
   font-size: 2cqw;
 }
 .print-map-qr {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.6cqw;
-  margin: 1.4cqw auto 0;
-  color: #000;
-  text-decoration: none;
-}
-.print-map-qr svg {
-  width: 12.8cqw;
-  height: 12.8cqw;
-  flex: 0 0 12.8cqw;
-}
-.print-map-qr span {
-  font:
-    1.6cqw/1.4 Arial,
-    sans-serif;
-  max-width: 12cqw;
-  text-align: left;
-  color: #000;
+  display: none;
 }
 .print-admission {
   display: flex;
@@ -3291,13 +3277,13 @@ details.panel summary {
 .print-notes {
   margin-top: 1.4cqw;
 }
-.print-venues section {
-  display: flex;
-  flex-direction: column;
-}
-.print-venues .print-map-qr {
-  margin-top: auto;
-  padding-top: 1cqw;
+.print-verse {
+  max-width: 78cqw;
+  margin: 0 auto 2.4cqw !important;
+  font-size: 2cqw !important;
+  line-height: 1.45 !important;
+  font-style: italic;
+  text-align: center;
 }
 
 /* Longer invitations reflow before export; QR dimensions stay unchanged. */

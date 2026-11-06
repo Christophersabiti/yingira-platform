@@ -1,10 +1,8 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import QRCode from 'qrcode';
 import { useLayoutEffect, useRef } from 'react';
 import { fitPrintCard } from '@/lib/print-card-fit';
 import type { Design } from '@/lib/planning';
-import { InvitationFlowers } from './invitation-flowers';
 export type CardDetails = {
   title: string;
   venue: string;
@@ -14,59 +12,6 @@ export type CardDetails = {
   capacity: number;
   tableLabel: string;
 };
-
-// Omitting origin lets Maps use the scanning guest's current location.
-export function venueDirections(venue: string, map: string) {
-  let destination = venue;
-  let placeId = '';
-  try {
-    const url = new URL(map);
-    destination =
-      url.searchParams.get('destination') ||
-      url.searchParams.get('query') ||
-      url.searchParams.get('q') ||
-      venue;
-    placeId =
-      url.searchParams.get('destination_place_id') ||
-      url.searchParams.get('query_place_id') ||
-      '';
-  } catch {
-    /* The venue name is also a valid Maps destination. */
-  }
-  const params = new URLSearchParams({ api: '1', destination });
-  if (placeId) params.set('destination_place_id', placeId);
-  return `https://www.google.com/maps/dir/?${params}`;
-}
-
-function DirectionQr({ venue, map }: { venue: string; map: string }) {
-  const href = venueDirections(venue, map);
-  const { modules } = QRCode.create(href, { errorCorrectionLevel: 'M' });
-  const size = modules.size;
-  const path: string[] = [];
-  for (let y = 0; y < size; y++)
-    for (let x = 0; x < size; x++)
-      if (modules.get(y, x)) path.push(`M${x + 4} ${y + 4}h1v1h-1z`);
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      className="print-map-qr"
-      aria-label={`Directions to ${venue}`}
-    >
-      <svg
-        role="img"
-        aria-label={`Directions QR for ${venue}`}
-        viewBox={`0 0 ${size + 8} ${size + 8}`}
-        shapeRendering="crispEdges"
-      >
-        <rect width="100%" height="100%" fill="#fff" />
-        <path d={path.join('')} fill="#000" />
-      </svg>
-      <span>Scan for directions</span>
-    </a>
-  );
-}
 
 export function InvitationCard({
   design,
@@ -125,19 +70,15 @@ export function InvitationCard({
               <h2>Church</h2>
               <strong>{e.ceremonyVenue}</strong>
               {e.ceremonyTime && <p>{e.ceremonyTime}</p>}
-              <DirectionQr venue={e.ceremonyVenue} map={e.ceremonyMap} />
             </section>
           )}
           <section>
             <h2>Reception</h2>
             <strong>{e.receptionVenue || details.venue}</strong>
             {e.receptionTime && <p>{e.receptionTime}</p>}
-            <DirectionQr
-              venue={e.receptionVenue || details.venue}
-              map={e.receptionMap}
-            />
           </section>
         </div>
+        {design.verse && <p className="print-verse">{design.verse}</p>}
         <div className="print-admission">
           {qr ? (
             <img
@@ -165,6 +106,7 @@ export function InvitationCard({
         </div>
         <div className="print-notes">
           {design.dressCode && <p>Dress code: {design.dressCode}</p>}
+          {design.guestNotice && <p>{design.guestNotice}</p>}
           {e.kindNote && <p>{e.kindNote}</p>}
           {design.directions && <p>{design.directions}</p>}
           {design.programme && <p>{design.programme}</p>}

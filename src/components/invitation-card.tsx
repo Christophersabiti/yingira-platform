@@ -13,6 +13,29 @@ export type CardDetails = {
   tableLabel: string;
 };
 
+// Kept for map-link consumers; the printable card no longer renders a directions QR.
+export function venueDirections(venue: string, map: string) {
+  let destination = venue;
+  let placeId = '';
+  try {
+    const url = new URL(map);
+    destination =
+      url.searchParams.get('destination') ||
+      url.searchParams.get('query') ||
+      url.searchParams.get('q') ||
+      venue;
+    placeId =
+      url.searchParams.get('destination_place_id') ||
+      url.searchParams.get('query_place_id') ||
+      '';
+  } catch {
+    /* The venue name is also a valid Maps destination. */
+  }
+  const params = new URLSearchParams({ api: '1', destination });
+  if (placeId) params.set('destination_place_id', placeId);
+  return `https://www.google.com/maps/dir/?${params}`;
+}
+
 export function InvitationCard({
   design,
   details,

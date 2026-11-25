@@ -3277,6 +3277,10 @@ details.panel summary {
 .print-notes {
   margin-top: 1.4cqw;
 }
+.print-wedding-card .print-guest-notice {
+  white-space: pre-line;
+  font-weight: 700;
+}
 .print-verse {
   max-width: 78cqw;
   margin: 0 auto 2.4cqw !important;

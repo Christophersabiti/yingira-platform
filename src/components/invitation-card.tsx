@@ -129,7 +129,9 @@ export function InvitationCard({
         </div>
         <div className="print-notes">
           {design.dressCode && <p>Dress code: {design.dressCode}</p>}
-          {design.guestNotice && <p>{design.guestNotice}</p>}
+          {design.guestNotice && (
+            <p className="print-guest-notice">{design.guestNotice}</p>
+          )}
           {e.kindNote && <p>{e.kindNote}</p>}
           {design.directions && <p>{design.directions}</p>}
           {design.programme && <p>{design.programme}</p>}

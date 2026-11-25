@@ -351,6 +351,12 @@ export function InvitationExperienceView({
           </button>
         </section>
       )}
+      {design.guestNotice && (
+        <section className="inv-section" data-unveil>
+          <p className="inv-kicker">Please note</p>
+          <p className="inv-copy inv-preserve">{design.guestNotice}</p>
+        </section>
+      )}
       {e.kindNote && (
         <section className="inv-section" data-unveil>
           <Heart size={26} className="inv-section-icon" />

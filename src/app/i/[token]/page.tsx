@@ -6,8 +6,18 @@ import Image from 'next/image';
 import QRCode from 'qrcode';
 import { invitation } from '@/server/invitation';
 import { appOrigin } from '@/server/config';
+import { invitationMetadata } from '@/server/share-metadata';
+import type { Metadata } from 'next';
 import { CalendarDays, MapPin, Users } from 'lucide-react';
 export const dynamic = 'force-dynamic';
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}): Promise<Metadata> {
+  const { token } = await params;
+  return invitationMetadata(token, `${appOrigin()}/i/${token}`);
+}
 export default async function InvitationPage({
   params,
 }: {

@@ -1,7 +1,20 @@
 import { notFound } from 'next/navigation';
 import InvitationPage from '../i/[token]/page';
 import { tokenForShareSlug } from '@/server/invitation-links';
+import { invitationMetadata } from '@/server/share-metadata';
+import { appOrigin } from '@/server/config';
+import type { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const token = await tokenForShareSlug(slug).catch(() => null);
+  if (!token) return {};
+  return invitationMetadata(token, `${appOrigin()}/${slug}`);
+}
 export default async function GuestSharePage({
   params,
 }: {
